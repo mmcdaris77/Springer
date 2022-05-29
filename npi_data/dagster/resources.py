@@ -132,7 +132,7 @@ def pop_data_resource(context):
     url = 'https://data.lacity.org/api/views/nxs9-385f/rows.csv?accessType=DOWNLOAD'
     dest_file_name = '2010_Census_Populations_by_Zip_Code.csv'
     download_dir, csv_dir = make_data_dirs('pop_data')
-    download_dir = csv_dir # not a zip file
+
     dest_file_path = os.path.join(download_dir, dest_file_name)
 
     vars = {

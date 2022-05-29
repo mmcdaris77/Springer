@@ -2,7 +2,7 @@ from dagster import job
 from resources import npi_dbt_resource
 from resources import npi_data_resouce, hrr_data_resource, database_connection, pop_data_resource
 from ops import download_file, unzip_file, split_csv_to_parts, csv_parts_to_sqlite, run_dbt
-from ops import set_vars, run_operation
+from ops import set_vars, run_operation, dbt_deps
 
 @job(
         resource_defs={
@@ -24,6 +24,7 @@ from ops import set_vars, run_operation
 )
 def npi_job():
     npi_data_vars, hrr_data_vars, pop_data_vars = set_vars()
+    deps = dbt_deps()
     download_npi_zip_response = download_file(vars=npi_data_vars)
     download_hrr_zip_response = download_file(vars=hrr_data_vars)
     download_pop_zip_response = download_file(vars=pop_data_vars)
@@ -42,7 +43,8 @@ def npi_job():
     run_dbt_npi = run_dbt(after=[
                                     csv_to_sqlite_npi,
                                     csv_to_sqlite_hrr,
-                                    csv_to_sqlite_pop
+                                    csv_to_sqlite_pop,
+                                    deps
                                 ])
     drop_stg_tables = run_operation(after=run_dbt_npi)
 
