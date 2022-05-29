@@ -1,0 +1,55 @@
+
+
+select
+     npi
+    ,Other_Provider_Identifier1
+    ,Other_Provider_Identifier2
+    ,Other_Provider_Identifier3
+    ,Other_Provider_Identifier4
+    ,Other_Provider_Identifier5
+    ,Other_Provider_Identifier6
+    ,Other_Provider_Identifier7
+    ,Other_Provider_Identifier8
+    ,Other_Provider_Identifier9
+    ,Other_Provider_Identifier10
+    ,Other_Provider_Identifier11
+    ,Other_Provider_Identifier12
+    ,Other_Provider_Identifier13
+    ,Other_Provider_Identifier14
+    ,Other_Provider_Identifier15
+    ,Other_Provider_Identifier16
+    ,Other_Provider_Identifier17
+    ,Other_Provider_Identifier18
+    ,Other_Provider_Identifier19
+    ,Other_Provider_Identifier20
+    ,Other_Provider_Identifier21
+    ,Other_Provider_Identifier22
+    ,Other_Provider_Identifier23
+    ,Other_Provider_Identifier24
+    ,Other_Provider_Identifier25
+    ,Other_Provider_Identifier26
+    ,Other_Provider_Identifier27
+    ,Other_Provider_Identifier28
+    ,Other_Provider_Identifier29
+    ,Other_Provider_Identifier30
+    ,Other_Provider_Identifier31
+    ,Other_Provider_Identifier32
+    ,Other_Provider_Identifier33
+    ,Other_Provider_Identifier34
+    ,Other_Provider_Identifier35
+    ,Other_Provider_Identifier36
+    ,Other_Provider_Identifier37
+    ,Other_Provider_Identifier38
+    ,Other_Provider_Identifier39
+    ,Other_Provider_Identifier40
+    ,Other_Provider_Identifier41
+    ,Other_Provider_Identifier42
+    ,Other_Provider_Identifier43
+    ,Other_Provider_Identifier44
+    ,Other_Provider_Identifier45
+    ,Other_Provider_Identifier46
+    ,Other_Provider_Identifier47
+    ,Other_Provider_Identifier48
+    ,Other_Provider_Identifier49
+    ,Other_Provider_Identifier50
+from {{ ref('stg_npidata_pfile') }}

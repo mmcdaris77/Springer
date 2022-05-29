@@ -1,0 +1,55 @@
+
+
+select
+     npi
+    ,Other_Provider_Identifier_Issuer1
+    ,Other_Provider_Identifier_Issuer2
+    ,Other_Provider_Identifier_Issuer3
+    ,Other_Provider_Identifier_Issuer4
+    ,Other_Provider_Identifier_Issuer5
+    ,Other_Provider_Identifier_Issuer6
+    ,Other_Provider_Identifier_Issuer7
+    ,Other_Provider_Identifier_Issuer8
+    ,Other_Provider_Identifier_Issuer9
+    ,Other_Provider_Identifier_Issuer10
+    ,Other_Provider_Identifier_Issuer11
+    ,Other_Provider_Identifier_Issuer12
+    ,Other_Provider_Identifier_Issuer13
+    ,Other_Provider_Identifier_Issuer14
+    ,Other_Provider_Identifier_Issuer15
+    ,Other_Provider_Identifier_Issuer16
+    ,Other_Provider_Identifier_Issuer17
+    ,Other_Provider_Identifier_Issuer18
+    ,Other_Provider_Identifier_Issuer19
+    ,Other_Provider_Identifier_Issuer20
+    ,Other_Provider_Identifier_Issuer21
+    ,Other_Provider_Identifier_Issuer22
+    ,Other_Provider_Identifier_Issuer23
+    ,Other_Provider_Identifier_Issuer24
+    ,Other_Provider_Identifier_Issuer25
+    ,Other_Provider_Identifier_Issuer26
+    ,Other_Provider_Identifier_Issuer27
+    ,Other_Provider_Identifier_Issuer28
+    ,Other_Provider_Identifier_Issuer29
+    ,Other_Provider_Identifier_Issuer30
+    ,Other_Provider_Identifier_Issuer31
+    ,Other_Provider_Identifier_Issuer32
+    ,Other_Provider_Identifier_Issuer33
+    ,Other_Provider_Identifier_Issuer34
+    ,Other_Provider_Identifier_Issuer35
+    ,Other_Provider_Identifier_Issuer36
+    ,Other_Provider_Identifier_Issuer37
+    ,Other_Provider_Identifier_Issuer38
+    ,Other_Provider_Identifier_Issuer39
+    ,Other_Provider_Identifier_Issuer40
+    ,Other_Provider_Identifier_Issuer41
+    ,Other_Provider_Identifier_Issuer42
+    ,Other_Provider_Identifier_Issuer43
+    ,Other_Provider_Identifier_Issuer44
+    ,Other_Provider_Identifier_Issuer45
+    ,Other_Provider_Identifier_Issuer46
+    ,Other_Provider_Identifier_Issuer47
+    ,Other_Provider_Identifier_Issuer48
+    ,Other_Provider_Identifier_Issuer49
+    ,Other_Provider_Identifier_Issuer50
+from {{ ref('stg_npidata_pfile') }}
