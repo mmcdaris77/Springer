@@ -104,6 +104,11 @@ def csv_parts_to_sqlite(context, after, vars):
                 os.remove(csv_file)
                 i += 1
 
+
+@op(required_resource_keys={"dbt"})
+def dbt_deps(context):
+    context.resources.dbt.cli(command='deps')
+
 @op(required_resource_keys={"dbt"})
 def run_dbt(context, after):
     models_selector = 'npi_data.*'
