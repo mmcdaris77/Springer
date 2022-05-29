@@ -1,0 +1,55 @@
+
+
+select
+     npi
+    ,Other_Provider_Identifier_State1
+    ,Other_Provider_Identifier_State2
+    ,Other_Provider_Identifier_State3
+    ,Other_Provider_Identifier_State4
+    ,Other_Provider_Identifier_State5
+    ,Other_Provider_Identifier_State6
+    ,Other_Provider_Identifier_State7
+    ,Other_Provider_Identifier_State8
+    ,Other_Provider_Identifier_State9
+    ,Other_Provider_Identifier_State10
+    ,Other_Provider_Identifier_State11
+    ,Other_Provider_Identifier_State12
+    ,Other_Provider_Identifier_State13
+    ,Other_Provider_Identifier_State14
+    ,Other_Provider_Identifier_State15
+    ,Other_Provider_Identifier_State16
+    ,Other_Provider_Identifier_State17
+    ,Other_Provider_Identifier_State18
+    ,Other_Provider_Identifier_State19
+    ,Other_Provider_Identifier_State20
+    ,Other_Provider_Identifier_State21
+    ,Other_Provider_Identifier_State22
+    ,Other_Provider_Identifier_State23
+    ,Other_Provider_Identifier_State24
+    ,Other_Provider_Identifier_State25
+    ,Other_Provider_Identifier_State26
+    ,Other_Provider_Identifier_State27
+    ,Other_Provider_Identifier_State28
+    ,Other_Provider_Identifier_State29
+    ,Other_Provider_Identifier_State30
+    ,Other_Provider_Identifier_State31
+    ,Other_Provider_Identifier_State32
+    ,Other_Provider_Identifier_State33
+    ,Other_Provider_Identifier_State34
+    ,Other_Provider_Identifier_State35
+    ,Other_Provider_Identifier_State36
+    ,Other_Provider_Identifier_State37
+    ,Other_Provider_Identifier_State38
+    ,Other_Provider_Identifier_State39
+    ,Other_Provider_Identifier_State40
+    ,Other_Provider_Identifier_State41
+    ,Other_Provider_Identifier_State42
+    ,Other_Provider_Identifier_State43
+    ,Other_Provider_Identifier_State44
+    ,Other_Provider_Identifier_State45
+    ,Other_Provider_Identifier_State46
+    ,Other_Provider_Identifier_State47
+    ,Other_Provider_Identifier_State48
+    ,Other_Provider_Identifier_State49
+    ,Other_Provider_Identifier_State50
+from {{ ref('stg_npidata_pfile') }}

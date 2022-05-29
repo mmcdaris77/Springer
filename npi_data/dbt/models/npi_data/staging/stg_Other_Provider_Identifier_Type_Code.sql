@@ -1,0 +1,55 @@
+
+
+select
+     npi
+    ,Other_Provider_Identifier_Type_Code1
+    ,Other_Provider_Identifier_Type_Code2
+    ,Other_Provider_Identifier_Type_Code3
+    ,Other_Provider_Identifier_Type_Code4
+    ,Other_Provider_Identifier_Type_Code5
+    ,Other_Provider_Identifier_Type_Code6
+    ,Other_Provider_Identifier_Type_Code7
+    ,Other_Provider_Identifier_Type_Code8
+    ,Other_Provider_Identifier_Type_Code9
+    ,Other_Provider_Identifier_Type_Code10
+    ,Other_Provider_Identifier_Type_Code11
+    ,Other_Provider_Identifier_Type_Code12
+    ,Other_Provider_Identifier_Type_Code13
+    ,Other_Provider_Identifier_Type_Code14
+    ,Other_Provider_Identifier_Type_Code15
+    ,Other_Provider_Identifier_Type_Code16
+    ,Other_Provider_Identifier_Type_Code17
+    ,Other_Provider_Identifier_Type_Code18
+    ,Other_Provider_Identifier_Type_Code19
+    ,Other_Provider_Identifier_Type_Code20
+    ,Other_Provider_Identifier_Type_Code21
+    ,Other_Provider_Identifier_Type_Code22
+    ,Other_Provider_Identifier_Type_Code23
+    ,Other_Provider_Identifier_Type_Code24
+    ,Other_Provider_Identifier_Type_Code25
+    ,Other_Provider_Identifier_Type_Code26
+    ,Other_Provider_Identifier_Type_Code27
+    ,Other_Provider_Identifier_Type_Code28
+    ,Other_Provider_Identifier_Type_Code29
+    ,Other_Provider_Identifier_Type_Code30
+    ,Other_Provider_Identifier_Type_Code31
+    ,Other_Provider_Identifier_Type_Code32
+    ,Other_Provider_Identifier_Type_Code33
+    ,Other_Provider_Identifier_Type_Code34
+    ,Other_Provider_Identifier_Type_Code35
+    ,Other_Provider_Identifier_Type_Code36
+    ,Other_Provider_Identifier_Type_Code37
+    ,Other_Provider_Identifier_Type_Code38
+    ,Other_Provider_Identifier_Type_Code39
+    ,Other_Provider_Identifier_Type_Code40
+    ,Other_Provider_Identifier_Type_Code41
+    ,Other_Provider_Identifier_Type_Code42
+    ,Other_Provider_Identifier_Type_Code43
+    ,Other_Provider_Identifier_Type_Code44
+    ,Other_Provider_Identifier_Type_Code45
+    ,Other_Provider_Identifier_Type_Code46
+    ,Other_Provider_Identifier_Type_Code47
+    ,Other_Provider_Identifier_Type_Code48
+    ,Other_Provider_Identifier_Type_Code49
+    ,Other_Provider_Identifier_Type_Code50
+from {{ ref('stg_npidata_pfile') }}

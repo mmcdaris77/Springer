@@ -1,0 +1,65 @@
+{{
+    config(
+        alias='npi_npidata_pfile'
+    )
+}}
+
+
+
+select
+     NPI
+    ,Entity_Type_Code
+    ,Replacement_NPI
+    ,Employer_Identification_Number_EIN
+    ,Provider_Organization_Name_Legal_Business_Name
+    ,Provider_Last_Name_Legal_Name
+    ,Provider_First_Name
+    ,Provider_Middle_Name
+    ,Provider_Name_Prefix_Text
+    ,Provider_Name_Suffix_Text
+    ,Provider_Credential_Text
+    ,Provider_Other_Organization_Name
+    ,Provider_Other_Organization_Name_Type_Code
+    ,Provider_Other_Last_Name
+    ,Provider_Other_First_Name
+    ,Provider_Other_Middle_Name
+    ,Provider_Other_Name_Prefix_Text
+    ,Provider_Other_Name_Suffix_Text
+    ,Provider_Other_Credential_Text
+    ,Provider_Other_Last_Name_Type_Code
+    ,Provider_First_Line_Business_Mailing_Address
+    ,Provider_Second_Line_Business_Mailing_Address
+    ,Provider_Business_Mailing_Address_City_Name
+    ,Provider_Business_Mailing_Address_State_Name
+    ,Provider_Business_Mailing_Address_Postal_Code
+    ,Provider_Business_Mailing_Address_Country_Code_If_outside_US
+    ,Provider_Business_Mailing_Address_Telephone_Number
+    ,Provider_Business_Mailing_Address_Fax_Number
+    ,Provider_First_Line_Business_Practice_Location_Address
+    ,Provider_Second_Line_Business_Practice_Location_Address
+    ,Provider_Business_Practice_Location_Address_City_Name
+    ,Provider_Business_Practice_Location_Address_State_Name
+    ,Provider_Business_Practice_Location_Address_Postal_Code
+    ,Provider_Business_Practice_Location_Address_Country_Code_If_outside_US
+    ,Provider_Business_Practice_Location_Address_Telephone_Number
+    ,Provider_Business_Practice_Location_Address_Fax_Number
+    ,Provider_Enumeration_Date
+    ,Last_Update_Date
+    ,NPI_Deactivation_Reason_Code
+    ,NPI_Deactivation_Date
+    ,NPI_Reactivation_Date
+    ,Provider_Gender_Code
+    ,Authorized_Official_Last_Name
+    ,Authorized_Official_First_Name
+    ,Authorized_Official_Middle_Name
+    ,Authorized_Official_Title_or_Position
+    ,Authorized_Official_Telephone_Number
+    ,Is_Sole_Proprietor
+    ,Is_Organization_Subpart
+    ,Parent_Organization_LBN
+    ,Parent_Organization_TIN
+    ,Authorized_Official_Name_Prefix_Text
+    ,Authorized_Official_Name_Suffix_Text
+    ,Authorized_Official_Credential_Text
+    ,Certification_Date
+from {{ ref('stg_npidata_pfile') }}
