@@ -17,7 +17,7 @@ with cte_unpivot as (
 
 select 
      npi
-    ,replace(field_name, 'Healthcare_Provider_Primary_Taxonomy_Switch', '') as Seq_Id
+    ,replace(lower(field_name), 'healthcare_provider_primary_taxonomy_switch', '') as Seq_Id
     ,value as Taxonomy_Code_Switch
 from cte_unpivot
 where nullif(trim(value), '') is not null

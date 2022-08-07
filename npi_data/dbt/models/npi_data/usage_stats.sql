@@ -5,11 +5,10 @@
 }}
 
 with cte_seq as (
-    select 1 as seq_id
-    union all 
-    select seq_id + 1
-    from cte_seq
-    where seq_id < 25
+    select generated_number as seq_id
+    from (
+    {{ dbt_utils.generate_series(25) }} 
+    ) x
 )
 , cte_cnt_all as (
     select

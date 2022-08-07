@@ -16,7 +16,7 @@ with cte_unpivot as (
 
 select 
      npi
-    ,replace(field_name, 'Other_Provider_Identifier_Type_Code', '') as Seq_Id
+    ,replace(lower(field_name), 'other_provider_identifier_type_code', '') as Seq_Id
     ,value as Provider_Identifier_Type_Code
 from cte_unpivot
 where nullif(trim(value), '') is not null

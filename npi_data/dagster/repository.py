@@ -1,5 +1,5 @@
 from dagster import repository
-from jobs import npi_job
+from jobs import npi_job, npi_dbt_only_job
 
 '''
     dagit -f repository.py
@@ -13,5 +13,6 @@ from jobs import npi_job
 def my_repository():
     return [
         npi_job,
+        npi_dbt_only_job,
     ]
 

@@ -2,7 +2,8 @@ from dagster import resource
 from dagster_dbt import dbt_cli_resource
 import os
 import sqlite3
-
+import psycopg2
+from helpers import sqlite_power,generate_dbt_profiles_yml
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 DATA_PATH = os.path.join(PROJECT_ROOT, 'data')
@@ -17,26 +18,6 @@ SQLITE_DB = os.path.join(DATA_PATH, 'sqlite\\npi_db.db')
         - create dirs if they are not there
         - create sqlite db if not there
 """
-# make a project yml file locally for the sqlite connection  
-profiles_yml_file = os.path.join(PROJECT_ROOT, 'profiles.yml')
-profiles_yml_content = '''
-sqlite_npi:
-  outputs:
-
-    dev:
-      type: sqlite
-      threads: 1
-      database: 'npi_db'
-      schema: 'main'
-      schemas_and_paths:
-        main: '{}'
-      schema_directory: '/my_project/data'
-
-  target: dev
-'''.format(SQLITE_DB)
-
-with open(profiles_yml_file, 'w') as f:
-    f.write(profiles_yml_content)
 
 if not os.path.isdir(DATA_PATH):
     os.makedirs(DATA_PATH)
@@ -49,6 +30,8 @@ if not os.path.isdir(os.path.dirname(SQLITE_PATH)):
 
 # make db
 con = sqlite3.connect(SQLITE_DB)
+# add power function for dbt_utils.generate_series()
+con.create_function("power", 2, sqlite_power)
 con.close()
 
 
@@ -82,10 +65,30 @@ def make_data_dirs(str_name):
 
 
 @resource(
+    config_schema={"con_type": str, "postgres_host": str, "postgres_user": str, "postgres_pw": str, "postgres_db": str},
     description='''I am a SQLITE database path'''
 )
 def database_connection(context):
-    return SQLITE_DB
+    postgres_host = context.resource_config["postgres_host"]
+    postgres_user = context.resource_config["postgres_user"]
+    postgres_pw = context.resource_config["postgres_pw"]
+    postgres_db = context.resource_config["postgres_db"]
+    con = None
+    con_type = context.resource_config["con_type"].upper()
+    if con_type == 'SQLITE':
+        con = sqlite3.connect(SQLITE_DB)
+    if con_type == 'POSTGRES':
+        con = psycopg2.connect(
+                                host=postgres_host,
+                                database=postgres_db,
+                                user=postgres_user,
+                                password=postgres_pw)
+
+    # make a project yml file locally for the sqlite connection  
+    generate_dbt_profiles_yml(PROJECT_ROOT, SQLITE_DB, postgres_host, postgres_user, postgres_pw, postgres_db)
+
+    return {'connection':con, 'con_type': con_type}
+# 
 
 @resource(
     description='''vars for processing the npi data'''

@@ -16,7 +16,7 @@ with cte_unpivot as (
 
 select 
      npi
-    ,replace(field_name, 'Healthcare_Provider_Taxonomy_Group', '') as Seq_Id
+    ,replace(lower(field_name), 'healthcare_provider_taxonomy_group', '') as Seq_Id
     ,value as License_Number
 from cte_unpivot
 where nullif(trim(value), '') is not null

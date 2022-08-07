@@ -1,11 +1,13 @@
+from logging import raiseExceptions
 from dagster import op, Out 
 from helpers import split_csv_into_parts
 import os
 import urllib.request
 import zipfile
 import pandas
-import sqlite3
-
+import psycopg2
+import psycopg2.extras
+import csv
 
 @op(
         required_resource_keys={"npi_data_resouce", "hrr_data_resource", "pop_data_resource"}, 
@@ -61,7 +63,7 @@ def split_csv_to_parts(context, after, vars):
     quote_char = vars['quote_char']
     
     prefix='stg_'
-    file_size=200000
+    file_size=100000
     files = os.listdir(in_path)
     
     for f in files:
@@ -73,8 +75,13 @@ def split_csv_to_parts(context, after, vars):
     return True
 
 @op(required_resource_keys={"database_connection"}, )
-def csv_parts_to_sqlite(context, after, vars):
-    sql_con = sqlite3.connect(context.resources.database_connection)
+def load_to_database(context, after, vars):
+    con = context.resources.database_connection['connection']
+    con_type = context.resources.database_connection['con_type']
+    context.log.info('##########################################')
+    context.log.info('con_type' + con_type)
+    context.log.info('##########################################')
+
     tmp_path = vars['csv_dir']
 
     context.log.info('TMP_PATH ' + tmp_path)
@@ -88,25 +95,65 @@ def csv_parts_to_sqlite(context, after, vars):
             if f.split('.')[1] == 'csv':
                 table_name = f.split('.')[0]
                 context.log.info('Importing csv: {0} \nas: {1}'.format(f, table_name))
-                csv_file = file_to_part
-                with open(csv_file, 'r') as cf:
-                    h = cf.readline()
-
-                # make all cols as strings
-                dtypes = {}
-                for col in h.split(','):
-                    dtypes[col.replace('"', '').replace('\n', '')] = 'string'
-
-                df = pandas.read_csv(csv_file, dtype=dtypes)
-                df.columns.str.replace(' ', '_')
-                df.to_sql(table_name, sql_con, if_exists='replace', index=False, dtype=dtypes)
-
-                os.remove(csv_file)
-                i += 1
+                csv_file = file_to_part    
+                if con_type == 'SQLITE':
+                    csv_parts_to_sqlite(con, csv_file, table_name, context)
+                elif con_type == 'POSTGRES':
+                    csv_parts_to_postgres(con, csv_file, table_name, context)
+                else:
+                    context.log.error('not a valid con_type')
 
 
-@op(required_resource_keys={"dbt"})
+def csv_parts_to_postgres(con, csv_file, table_name, context):
+    cur = con.cursor()
+    con.autocommit = True
+
+    with open(csv_file, 'r') as cf:
+        h = cf.readline()
+
+    # make all cols as strings
+    dtypes = {}
+    for col in h.split('\x01'):
+        dtypes[col.replace('"', '').replace('\n', '')] = 'text'
+
+    col_defs = []
+    for i in dtypes.keys():
+        col = '{} {}'.format(i, dtypes[i])
+        col_defs.append(col)
+
+    sql = 'drop table if exists {};'.format(table_name)
+    cur.execute(sql)
+    sql = 'create unlogged table if not exists {} ({});'.format(table_name, ','.join(col_defs))
+    cur.execute(sql)
+
+    sql = 'insert into {}({}) values({})'.format(table_name, ','.join(dtypes.keys()), ','.join((i.replace('text', r'%s') for i in dtypes.values())))
+    #context.log.info(sql)
+    with open(csv_file, 'r') as f:
+        reader = csv.reader(f, delimiter='\x01')
+        next(reader) # skip header
+        all_rows = [row for row in reader]
+        psycopg2.extras.execute_batch(cur, sql, all_rows, page_size=10000)
+
+
+def csv_parts_to_sqlite(con, csv_file, table_name, context):
+    with open(csv_file, 'r') as cf:
+        h = cf.readline()
+
+    # make all cols as strings
+    dtypes = {}
+    for col in h.split('\x01'):
+        dtypes[col.replace('"', '').replace('\n', '')] = 'string'
+
+    df = pandas.read_csv(csv_file, dtype=dtypes, delimiter='\x01')
+    df.columns.str.replace(' ', '_')
+    df.to_sql(table_name, con, if_exists='replace', index=False, dtype=dtypes)
+
+    os.remove(csv_file)
+
+
+@op(required_resource_keys={"dbt", "database_connection"})
 def dbt_deps(context):
+    con_type = context.resources.database_connection['con_type']
     context.resources.dbt.cli(command='deps')
 
 @op(required_resource_keys={"dbt"})
@@ -114,9 +161,17 @@ def run_dbt(context, after):
     models_selector = 'npi_data.*'
     context.resources.dbt.run(models=models_selector)
 
-@op(required_resource_keys={"dbt"})
+@op(
+        required_resource_keys={"dbt", "database_connection"},
+    )
 def run_operation(context, after):
-    context.resources.dbt.run_operation(macro='sqlite_drop_tables_by_pattern', args={'v_pattern':'stg_%', 'v_log_only': False})
+    con_type = context.resources.database_connection['con_type']
+    if con_type == 'SQLITE':
+        context.resources.dbt.run_operation(macro='sqlite_drop_tables_by_pattern', args={'v_pattern':'stg_%', 'v_log_only': False})
+    else:
+        context.log.info('dropping stg tables is not a feature for connection type {}'.format(con_type))
+        pass
+    
 
 
 

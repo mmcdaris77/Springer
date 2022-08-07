@@ -4,7 +4,9 @@
     )
 }}
 
-{% set list_of_relations = sqlite_get_tables_by_pattern('main', 'stg_ZipHsaHrr%') %}
+{% set v_schema = this.schema %}
+
+{% set list_of_relations = dbt_utils.get_relations_by_pattern(v_schema, 'stg_ZipHsaHrr%') %}
 
 with cte_data as (
     {{
