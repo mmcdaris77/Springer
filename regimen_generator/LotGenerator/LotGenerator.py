@@ -77,7 +77,7 @@ class LotGenerator():
             init_rule = LotRule(
                 name = 'init lot',
                 conditions=[condition_init_days], 
-                actions=[action_merge_drugs, action_in_init_range]
+                true_actions=[action_merge_drugs, action_in_init_range]
                 )
             
             init_rule.evaluate(fact_lot__next_drugs)
@@ -90,7 +90,7 @@ class LotGenerator():
                 cust_rule = LotRule(
                     name='gap_rules',
                     conditions=cust_conditions,
-                    actions=cust_actions
+                    true_actions=cust_actions
                 )
                 move_on = cust_rule.evaluate(fact_lot__next_drugs)
                 if not move_on:
@@ -100,7 +100,7 @@ class LotGenerator():
                     rules = LotRule(
                         name='def',
                         conditions=[condition_gap,condition_addions,condition_drops], 
-                        actions=[action_merge_drugs], 
+                        true_actions=[action_merge_drugs], 
                         false_actions=[action_advance_lot]
                         )
 

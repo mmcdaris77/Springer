@@ -1,5 +1,4 @@
 from typing import Callable
-from functools import reduce
 from datetime import date
 from .LineOfTherapy import LineOfTherapy, Drug
 
@@ -50,7 +49,6 @@ class LotCondition():
         self.eval_func = eval_func 
 
     def evaluation(self, fact: FactLotNextDrugs) -> bool:
-        print(f'LotCondition.evaluation: {self.eval_func.__name__}')
         return self.eval_func(fact)
 
 
@@ -64,38 +62,55 @@ class LotAction():
 
 
 class LotRule():
-    def __init__(self, name: str,  conditions: list[LotCondition], actions: list[LotAction], false_actions: list[LotAction] = None):
+    def __init__(self, name: str,  
+                 conditions: list[LotCondition], 
+                 true_actions: list[LotAction], 
+                 false_actions: list[LotAction] = None, 
+                 any_actions: list[LotAction] = None):
+        
         self.conditions = conditions
-        self.actions = actions
+        self.true_actions = true_actions
         self.false_action = false_actions
+        self.any_actions = any_actions
         self.name = name
 
     def add_condition(self, condition: LotCondition) -> None:
         self.conditions.append(condition)
 
-    def add_action(self, action: LotAction) -> None:
-        self.actions.append(action)
+    def add_true_action(self, action: LotAction) -> None:
+        self.true_actions.append(action)
+
+    def add_false_action(self, action: LotAction) -> None:
+        self.false_action.append(action)
+
+    def add_any_actions(self, action: LotAction) -> None:
+        self.any_actions.append(action)
 
     def evaluate(self, fact: FactLotNextDrugs):
         def fact_generator(conditions: list[LotCondition], fact: FactLotNextDrugs):
-            all_true = True
-            results = map(lambda condition: condition.eval_func(fact), conditions)
-            all_true = reduce(lambda x, y: x and y, results)
-            
-            if all_true:
-                return True, fact
-            else:
-                return False, fact
+            results = [condition.eval_func(fact) for condition in conditions]
 
-        t, true_fact = fact_generator(self.conditions, fact)
-        print(f'RuleName: {self.name}......... AllTrue: {t}')
+            if all(results):
+                return 'all', fact
+            elif any(results):
+                return 'any', fact
+            else:
+                return 'none', fact
+
+        true_state, true_fact = fact_generator(self.conditions, fact)
+
+        print(f'RuleName: {self.name}......... true_state: {true_state}')
         if not true_fact is None:
-            if t:
-                for action in self.actions:
+            if true_state == 'all' and not self.true_actions is None:
+                for action in self.true_actions:
                     action.exec_func(fact)
                 return True
             else:
-                if not self.false_action is None:
+                if true_state != 'all' and not self.false_action is None:
                     for action in self.false_action:
+                        action.exec_func(fact)
+                    return True
+                if true_state == 'any' and not self.any_actions is None:
+                    for action in self.any_actions:
                         action.exec_func(fact)
                     return True
