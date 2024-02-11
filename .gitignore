@@ -106,3 +106,4 @@ venv.bak/
 # defened by me
 _SCRATCH.*
 
+temp/
