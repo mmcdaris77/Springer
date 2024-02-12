@@ -4,48 +4,14 @@ import datetime
 from datetime import datetime
 from LotGenerator.LineOfTherapy import Drug
 from LotGenerator.LotGenerator import LotGenerator
+from LotGenerator.LotRuleConfig import get_settings
 
 me_dir = os.path.dirname(os.path.realpath(__file__))
 file_name = 'data/drug_exposure.csv'  
 a_file = os.path.join(me_dir, file_name)
 
-lot_rules = {
-        'gap_rules': [
-            {
-                'conditions': {
-                    'is_mono_therapy': {}, 
-                    'new_drugs_contains': {'drugs': ['40213227']},
-                    'gap': {'allowable_gap': 5000}
-                },
-                'actions': {
-                    'add_drugs_to_lot': {'next_drugs': 'self.next_drugs'}
-                }
-            }
-        ],
-        'addition_rules': [
-            {
-                'add_rule_1': {
-                'is_mono_therapy': True, 
-                'new_drug_contains': {'drugs': ['40213227', '40213228'], 'required_cnt': 1},
-                'allowable_gap': 180
-                }
-            }
-        ],
-        'drop_rules': [
-            {
-                'drop_rule_2': {
-                    'is_mono_therapy': False
-                }
-            }
-        ],
-        'maintenance_rules': [
-            {
-                'maint_rule_1': {
-                    'drug_drop': {}
-                }
-            }
-        ]
-}
+
+lot_rules = get_settings(rule_set_name='test')
 
 
 # get some data from a csv of synth omop.drug_exposure
@@ -70,7 +36,7 @@ with open(a_file, 'r') as f:
 lots = []
 print(f'Total persons to process: {len(person_list)}\nTotal drugs to process: {len(drugs_list)}')
 for idx, person in enumerate(person_list):
-    if person == '1127':
+    if person == '559':  #  559   1127
     #if 1==1':
         person_drugs = [d for d in drugs_list if d.person_id == person]
         print(f'working on..... person: {person}....drug count: {len(person_drugs)}')
@@ -78,12 +44,14 @@ for idx, person in enumerate(person_list):
         lot_generator.set_drug_list(person_drugs)
 
         print(lot_generator)
+        print(lot_generator.lot_rules)
 
         lot_generator.generate()
         lots.append(lot_generator)
 
         for lot in lot_generator.lots:
             print(lot)
+
 
 
 
