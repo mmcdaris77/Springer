@@ -32,7 +32,7 @@ class LotGenerator():
         iter_cnt = 0
         while len(self.drug_start_dates) > 0:
             self.next_drugs = []
-            is_within_init_range = False
+            is_is_within_init_range_range = False
             start_date = self.get_next_date() 
             logger.debug(f'\tIteration #: {iter_cnt} --> StartDate: {start_date}')
             iter_cnt+=1
@@ -54,8 +54,8 @@ class LotGenerator():
             fact_lot__next_drugs = FactLotNextDrugs(self.get_current_lot(), self.next_drugs)
             # init drugs rules
             action_add_init_drugs = LotAction('merge drugs', lambda fact: self.add_drugs_to_lot()) 
-            action_in_init_range = LotAction('set is_within_init_range True', lambda is_within_init_range: True)
-            condition_init_days = LotCondition('Initital Drugs', lambda fact: fact.within_init(self.init_drug_days))
+            action_in_init_range = LotAction('set is_is_within_init_range_range True', lambda is_is_within_init_range_range: True)
+            condition_init_days = LotCondition('Initital Drugs', lambda fact: fact.is_within_init_range(self.init_drug_days))
             init_rule = LotRule(
                 name = 'init lot',
                 conditions=[condition_init_days], 
@@ -64,7 +64,7 @@ class LotGenerator():
             init_rule.evaluate(fact_lot__next_drugs)
 
 
-            if not is_within_init_range:
+            if not is_is_within_init_range_range:
                 '''
                     check for events [drops/adds/gaps]: if true then send to function to 
                     check for additional rules from a config
@@ -73,8 +73,8 @@ class LotGenerator():
                 self.eval_rules('gap_rules', fact_lot__next_drugs, default_advance=False)
 
                 # check for add/drop and pass to configured if true
-                add_drug_condition = LotCondition('condition: drug_adds', lambda fact: fact.chk_new_drugs(self.lot_rules))
-                drop_drug_condition = LotCondition('condition: drug_drops', lambda fact: fact.chk_drug_drops(self.lot_rules))
+                add_drug_condition = LotCondition('condition: drug_adds', lambda fact: fact.has_drug_additions(self.lot_rules))
+                drop_drug_condition = LotCondition('condition: drug_drops', lambda fact: fact.has_drug_drops(self.lot_rules))
                 add_drug_action = LotAction('action: drug_adds', lambda fact: self.eval_rules('addition_rules', fact_lot__next_drugs))
                 drop_drug_action = LotAction('action: drug_drops', lambda fact: self.eval_rules('drop_rules', fact_lot__next_drugs))
                 
@@ -93,11 +93,11 @@ class LotGenerator():
                 drop_drug_rule.evaluate(fact_lot__next_drugs)
                 
                 # default gaps
-                gap_condition = LotCondition('condition: past_allowable_gap', lambda fact: fact.past_allowable_gap(self.allowable_drug_gap))
+                gap_condition = LotCondition('condition: is_past_allowable_gap', lambda fact: fact.is_past_allowable_gap(self.allowable_drug_gap))
                 gap_condition2 = LotCondition('condition: nex_drug_not_none', lambda fact: self.next_drugs is not None)
-                gap_action = LotAction('action: past_allowable_gap', lambda fact: self.advance_lot())
+                gap_action = LotAction('action: is_past_allowable_gap', lambda fact: self.advance_lot())
                 gap_rule = LotRule(
-                    name='rule: past_allowable_gap',
+                    name='rule: is_past_allowable_gap',
                     conditions=[gap_condition, gap_condition2],
                     true_actions=[gap_action]
                     )

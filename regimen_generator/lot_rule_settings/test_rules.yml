@@ -6,20 +6,20 @@ rule_sets:
       - name: gap_rule_1
         conditions:
           - is_mono_therapy:
-          - new_drugs_contains:   # allow for a massive gap if regimen is mono and adding any of the drugs
+          - new_drugs_contains_drugs:   # allow for a massive gap if regimen is mono and adding any of the drugs
               drugs: 
                 - '40213227'
                 - '1111111'
-          - within_allowable_gap: 
+          - is_within_allowable_gap: 
               allowable_gap: 5000
         actions:
           - add_drugs_to_lot:
       - name: gap_rule_2
         conditions:
-          - new_drugs_contains: 
+          - new_drugs_contains_drugs: 
               drugs: 
                 - '40213228'
-          - within_allowable_gap: 
+          - is_within_allowable_gap: 
               allowable_gap: 60
         actions:
           - do_nothing:
@@ -27,10 +27,10 @@ rule_sets:
     addition_rules:
       - name: add_rule_1
         conditions:
-          - new_drugs_contains: 
+          - new_drugs_contains_drugs: 
               drugs: 
                 - '40213227'
-          - within_allowable_gap: 
+          - is_within_allowable_gap: 
               allowable_gap: 180
         actions:
           - add_drugs_to_lot:
@@ -40,11 +40,11 @@ rule_sets:
       - name: gap_rule_1
         conditions:
           - is_mono_therapy:
-          - new_drugs_contains: 
+          - new_drugs_contains_drugs: 
               drugs: 
                 - '40213227'
                 - '1111111'
-          - within_allowable_gap: 
+          - is_within_allowable_gap: 
               allowable_gap: 5000
         actions:
           - add_drugs_to_lot:

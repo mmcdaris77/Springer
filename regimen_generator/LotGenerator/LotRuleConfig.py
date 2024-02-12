@@ -29,7 +29,7 @@ class Setting:
         
     def get_configured_setting(self, obj: any):
         if not hasattr(obj, self.func_name):
-            logger.error(f'{type(obj)} function not found: {self.func_name}')
+            logger.error(f'pbj_type: {type(obj)} --> function not found: {self.func_name}')
         else:
             func = (lambda k, v: lambda fact: getattr(obj, self.func_name)(**self.func_args))(self.func_name, self.func_args)
             return self.func_args, func
