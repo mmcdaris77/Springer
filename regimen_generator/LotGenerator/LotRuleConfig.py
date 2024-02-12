@@ -1,6 +1,7 @@
 import yaml
 import os
 import glob 
+from .lot_logger import logger
 from .LotRules import LotCondition, LotAction
 
 
@@ -28,7 +29,7 @@ class Setting:
         
     def get_configured_setting(self, obj: any):
         if not hasattr(obj, self.func_name):
-            print(f'{type(obj)} function not found: {self.func_name}')
+            logger.error(f'{type(obj)} function not found: {self.func_name}')
         else:
             func = (lambda k, v: lambda fact: getattr(obj, self.func_name)(**self.func_args))(self.func_name, self.func_args)
             return self.func_args, func
@@ -87,7 +88,7 @@ class LotRuleConfig:
 
     def get_rules_by_type(self, rule_type: str) -> list[dict]:
         if rule_type not in RULE_TYPES:
-            print(f'"{rule_type}" is not a valid rule_type')
+            logger.error(f'"{rule_type}" is not a valid rule_type')
             return None
         
         return sorted(getattr(self, rule_type), key=lambda r: r.priority) 
@@ -111,7 +112,6 @@ def get_settings(rule_set_name: str, config_path: str = RULE_SETTINGS_PATH) -> L
 
         for rule_set in data['rule_sets']:
             if rule_set['name'] == rule_set_name:
-                #print(json.dumps(rule_set, indent=4))
                 generator_config = LotRuleConfig()
                 for k, v in rule_set.items():
                     priority = 0

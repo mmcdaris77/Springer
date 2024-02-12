@@ -1,5 +1,6 @@
 from typing import Callable
 from datetime import date
+from .lot_logger import logger
 from .LineOfTherapy import LineOfTherapy, Drug
 
 
@@ -13,14 +14,14 @@ class FactLotNextDrugs():
         '''return False is min new drugs start date is beyond the allowable gap'''
         start_dtd: date = self.lot.end
         end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
-        #print(f'..................past_allowable_gap: {allowable_gap}: {(end_dtd - start_dtd).days > allowable_gap}')
+        logger.debug(f'past_allowable_gap: {allowable_gap}: {(end_dtd - start_dtd).days > allowable_gap}')
         return (end_dtd - start_dtd).days > allowable_gap
 
     def within_allowable_gap(self, allowable_gap=90) -> bool:
         '''return True is min new drugs start date is within allowable gap'''
         start_dtd: date = self.lot.end
         end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
-        #print(f'..................within_allowable_gap: {allowable_gap}: {0 <= (end_dtd - start_dtd).days < allowable_gap}')
+        logger.debug(f'within_allowable_gap: {allowable_gap}: {0 <= (end_dtd - start_dtd).days < allowable_gap}')
         return 0 <= (end_dtd - start_dtd).days < allowable_gap
     
     def within_init(self, allowable_gap=28) -> bool:
@@ -35,7 +36,7 @@ class FactLotNextDrugs():
         for d in self.next_drugs:
             if d not in [x.drug_name for x in self.lot.drugs] and self.past_allowable_gap(allowable_gap):
                 rtn = True
-        #print(f'..................chk_new_drugs: {rtn}')
+        logger.debug(f'chk_new_drugs: {rtn}')
         return rtn
     
     def chk_drug_drops(self, lot_rules: dict, allowable_gap:int = 0) -> bool: 
@@ -44,11 +45,11 @@ class FactLotNextDrugs():
         for d in [x.drug_name for x in self.lot.drugs]:
             if d not in self.next_drugs and self.past_allowable_gap(allowable_gap):
                 rtn = True
-        #print(f'..................chk_drug_drops: {rtn}')
+        logger.debug(f'chk_drug_drops: {rtn}')
         return rtn
             
     def is_mono_therapy(self) -> bool:
-        #print(f'..................is_mono_therapy: {self.lot.is_mono_therapy()}')
+        logger.debug(f'is_mono_therapy: {self.lot.is_mono_therapy()}')
         return self.lot.is_mono_therapy()
     
     def new_drugs_contains(self, drugs: list[str]) -> bool: 
@@ -56,7 +57,7 @@ class FactLotNextDrugs():
         for d in self.next_drugs:
             if d.drug_name in drugs:
                 rtn = True 
-        #print(f'..................new_drugs_contains: {drugs}: {rtn}')
+        logger.debug(f'new_drugs_contains: {drugs}: {rtn}')
         return rtn
 
 
@@ -116,7 +117,7 @@ class LotRule():
 
         true_state, true_fact = fact_generator(self.conditions, fact)
 
-        #print(f'.........RuleName: {self.name}......... true_state: {true_state}')
+        logger.debug(f'evaluate: RuleName: {self.name} ---> true_state: {true_state}')
         if not true_fact is None:
             if true_state == 'all' and not self.true_actions is None:
                 for action in self.true_actions:
