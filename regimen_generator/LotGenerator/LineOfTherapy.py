@@ -5,6 +5,8 @@ class Drug():
     def __init__(self, person_id: str, drug_name: str, start_dt: date, end_dt: date = None) -> None:
         self.person_id: str = person_id
         self.drug_name: str = drug_name
+        self.drug_class: str = None
+        self.drug_type: str = None
         self.start_dt: date = start_dt
         self.end_dt: date = self.default_end_date(end_dt)
     
@@ -26,6 +28,7 @@ class LineOfTherapy():
         self.end: date
         self.is_maint: bool = is_maint
         self.other_therapy: list = []
+        self.lot_rule: str
 
         self.set_start_date()
         self.set_end_date()
@@ -42,12 +45,19 @@ class LineOfTherapy():
         self.drugs += drug_list
         self.set_end_date()
 
-    def get_regimen(self, as_string: bool = False):
+    def get_regimen(self, as_string: bool = False) -> (str | list[str]):
         regimen = sorted(list(set([d.drug_name for d in self.drugs])))
         if as_string:
             return ','.join(regimen)
         else:
             return regimen 
+        
+    def get_classes(self, as_string: bool = False) -> (str | list[str]):
+        classes = sorted(list(set([d.drug_class for d in self.drugs])))
+        if as_string:
+            return ','.join(classes)
+        else:
+            return classes 
 
     def is_mono_therapy(self):
         if len(self.get_regimen()) == 1:
@@ -63,6 +73,9 @@ class LineOfTherapy():
                     \n\tdrug_cnt: {len(self.drugs)} \
                     \n\tregimen: {self.get_regimen()} \
                 '
+        rtn += '\n'+'-'*60
+        for d in self.drugs:
+            rtn += f'\n\t\t{d}'
         return rtn
 
 

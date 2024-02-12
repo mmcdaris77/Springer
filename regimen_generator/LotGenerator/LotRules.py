@@ -9,10 +9,18 @@ class FactLotNextDrugs():
         self.lot: LineOfTherapy = lot 
         self.next_drugs: list[Drug] = next_drugs
 
-    def gap(self, allowable_gap=90) -> bool:
+    def past_allowable_gap(self, allowable_gap=90) -> bool:
         '''return False is min new drugs start date is beyond the allowable gap'''
         start_dtd: date = self.lot.end
         end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
+        #print(f'..................past_allowable_gap: {allowable_gap}: {(end_dtd - start_dtd).days > allowable_gap}')
+        return (end_dtd - start_dtd).days > allowable_gap
+
+    def within_allowable_gap(self, allowable_gap=90) -> bool:
+        '''return True is min new drugs start date is within allowable gap'''
+        start_dtd: date = self.lot.end
+        end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
+        #print(f'..................within_allowable_gap: {allowable_gap}: {0 <= (end_dtd - start_dtd).days < allowable_gap}')
         return 0 <= (end_dtd - start_dtd).days < allowable_gap
     
     def within_init(self, allowable_gap=28) -> bool:
@@ -21,26 +29,35 @@ class FactLotNextDrugs():
         end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
         return 0 <= (end_dtd - start_dtd).days < allowable_gap
     
-    def chk_new_drugs(self, lot_rules: dict) -> bool: 
-        '''return False if new drugs were added and are not in an exception'''
+    def chk_new_drugs(self, lot_rules: dict, allowable_gap:int = 0) -> bool: 
+        '''return True if new drugs were added and are not in an exception'''
+        rtn = False
         for d in self.next_drugs:
-            if d not in [x.drug_name for x in self.lot.drugs]:
-                return False
+            if d not in [x.drug_name for x in self.lot.drugs] and self.past_allowable_gap(allowable_gap):
+                rtn = True
+        #print(f'..................chk_new_drugs: {rtn}')
+        return rtn
     
-    def chk_drug_drops(self, lot_rules: dict) -> bool: 
-        '''return False if drugs were dropped and are not in an exception'''
+    def chk_drug_drops(self, lot_rules: dict, allowable_gap:int = 0) -> bool: 
+        '''return True if drugs were dropped and are not in an exception'''
+        rtn = False
         for d in [x.drug_name for x in self.lot.drugs]:
-            if d not in self.next_drugs:
-                return False
+            if d not in self.next_drugs and self.past_allowable_gap(allowable_gap):
+                rtn = True
+        #print(f'..................chk_drug_drops: {rtn}')
+        return rtn
             
     def is_mono_therapy(self) -> bool:
+        #print(f'..................is_mono_therapy: {self.lot.is_mono_therapy()}')
         return self.lot.is_mono_therapy()
     
     def new_drugs_contains(self, drugs: list[str]) -> bool: 
+        rtn = False
         for d in self.next_drugs:
             if d.drug_name in drugs:
-                return True 
-        return False
+                rtn = True 
+        #print(f'..................new_drugs_contains: {drugs}: {rtn}')
+        return rtn
 
 
 class LotCondition():
@@ -99,7 +116,7 @@ class LotRule():
 
         true_state, true_fact = fact_generator(self.conditions, fact)
 
-        print(f'RuleName: {self.name}......... true_state: {true_state}')
+        #print(f'.........RuleName: {self.name}......... true_state: {true_state}')
         if not true_fact is None:
             if true_state == 'all' and not self.true_actions is None:
                 for action in self.true_actions:
