@@ -59,6 +59,22 @@ class FactLotNextDrugs():
                 rtn = True 
         logger.debug(f'new_drugs_contains_drugs: {drugs}: {rtn}')
         return rtn
+    
+    def new_drugs_contains_drug_class(self, classes: list[str]) -> bool: 
+        rtn = False
+        for d in self.next_drugs:
+            if d.drug_class in classes:
+                rtn = True 
+        logger.debug(f'new_drugs_contains_drug_class: {classes}: {rtn}')
+        return rtn
+    
+    def regimen_contains_drug_class(self, classes: list[str]) -> bool: 
+        rtn = False
+        for d in [x.drug_class for x in self.lot.drugs]:
+            if d in classes:
+                rtn = True
+        logger.debug(f'regimen_contains_drug_class: {rtn}')
+        return rtn
 
 
 class LotCondition():
