@@ -36,10 +36,11 @@ with open(a_file, 'r') as f:
 lots = []
 print(f'Total persons to process: {len(person_list)}\nTotal drugs to process: {len(drugs_list)}')
 for idx, person in enumerate(person_list):
-    if person == '559':  #  559   1127
+    if person == '1127':  #  559   1127
     #if 1==1':
         person_drugs = [d for d in drugs_list if d.person_id == person]
         print(f'working on..... person: {person}....drug count: {len(person_drugs)}')
+        #lot_generator = LotGenerator(person_id=person)
         lot_generator = LotGenerator(person_id=person, lot_rules=lot_rules)
         lot_generator.set_drug_list(person_drugs)
 

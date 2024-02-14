@@ -9,7 +9,7 @@ INIT_DAYS = 28
 ALLOWABLE_GAP = 90
 
 class LotGenerator():
-    def __init__(self, person_id: str, lot_rules: LotRuleConfig = None, init_drug_days: int = INIT_DAYS, allowable_drug_gap: int = ALLOWABLE_GAP) -> None:
+    def __init__(self, person_id: str, lot_rules: LotRuleConfig = LotRuleConfig(), init_drug_days: int = INIT_DAYS, allowable_drug_gap: int = ALLOWABLE_GAP) -> None:
         self.person_id: str = person_id
         self.patient_drugs: list[Drug] = []
         self.init_drug_days: int = init_drug_days
