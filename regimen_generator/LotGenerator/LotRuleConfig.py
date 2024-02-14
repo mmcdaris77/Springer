@@ -1,6 +1,7 @@
 import yaml
 import os
 import glob 
+from schema import Schema, Optional, And
 from .lot_logger import logger
 from .LotRules import LotCondition, LotAction
 
@@ -104,11 +105,81 @@ class LotRuleConfig:
         return rtn
     
 
+def validate_schema(rule_set_name: str, data: dict) -> dict:
+    logger.info("validating yml configuration")
+
+    CONDITIONS_DEFS = [
+        Schema({'regimen_contains_drug_class': {'classes': list[str]}}), 
+        Schema({'new_drugs_contains_drug_class': {'classes': list[str]}}), 
+        Schema({'new_drugs_contains_drugs': {'drugs': list[str]}}), 
+        Schema({'is_mono_therapy': None}), 
+        Schema({'has_drug_drops': None}), 
+        Schema({'has_drug_additions': None}), 
+        Schema({'is_within_allowable_gap': {'allowable_gap': int}}), 
+        Schema({'is_past_allowable_gap': {'allowable_gap': int}})
+    ]
+
+    ACTION_DEFS = [
+        Schema({'add_drugs_to_lot': None}),
+        Schema({'advance_lot': None}),
+        Schema({'set_maintenance_flag': None}),
+        Schema({'advance_into_maintenance': None}),
+        Schema({'do_nothing': None})
+    ]
+
+
+    valid_rule_set = lambda x: x in RULE_TYPES
+
+    def get_func_args_msg(func_list: list[Schema]) -> str:
+        msg = ''
+        for x in func_list:
+            f = list(x.schema.keys())[0]
+            msg += f'\n\t{f}: ('
+            val = x.schema[f]
+            if isinstance(val, dict):
+                for k, v in val.items():
+                    msg += f'{str(k)} --> {str(v)}, '
+                msg+=')'
+            else:
+                msg += f'{val})'
+        return msg
+
+
+    condition_error_msg = f'Invalid condition function def. Valid conditions include: {get_func_args_msg(CONDITIONS_DEFS)}\n'
+    action_error_msg = f'Invalid action function def. Valid action include: {get_func_args_msg(ACTION_DEFS)}\n'
+    error_msg = 'Invalid yml configuration. Valid rule_set names: \n\t{}\nThere may be more info below:\n'.format(',\n\t'.join(RULE_TYPES))
+
+
+    config_schema = Schema(
+        {
+            Optional('version'): str, 
+            'rule_sets': [ 
+                {
+                    'name': str, 
+                    valid_rule_set: [
+                        {
+                            'name': str, 
+                            'conditions': And(list, CONDITIONS_DEFS, error=condition_error_msg), 
+                            'actions': And(list, ACTION_DEFS, error=action_error_msg)
+                            }
+                        ]
+                    }
+                ]
+            }
+            , error=error_msg
+        )
+
+    try:
+        return config_schema.validate(data)
+    except Exception as e:
+        logger.error(f'ERROR validating the lot_rules yml configuration: {rule_set_name}s\n{e}')
+        exit()
+
 
 def get_settings(rule_set_name: str, config_path: str = RULE_SETTINGS_PATH) -> LotRuleConfig:
     for yml_file in glob.glob(os.path.join(config_path, '*.yml')):
         with open(yml_file, 'r') as f:
-            data = yaml.safe_load(f)
+            data = validate_schema(rule_set_name, yaml.safe_load(f))
 
         for rule_set in data['rule_sets']:
             if rule_set['name'] == rule_set_name:
