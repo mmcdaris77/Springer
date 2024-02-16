@@ -14,39 +14,27 @@ def process_lots(person_list: list[str], drugs_list: list[Drug], lot_rules=LotRu
     # for each person generate lots and append them to the list
         # get patient drugs and load them in an instance of LotGenerator
     lots = []
-    print(f'Total persons to process: {len(person_list)}\nTotal drugs to process: {len(drugs_list)}')
-    for idx, person in enumerate(person_list):
-        #if person == '1127':  #  559   1127
-        if 1==1:
-            person_drugs = [d for d in drugs_list if d.person_id == person]
-            logger.debug(f'working on..... person: {person}....drug count: {len(person_drugs)}')
-            #lot_generator = LotGenerator(person_id=person)
-            lot_generator = LotGenerator(person_id=person, lot_rules=lot_rules)
-            lot_generator.set_drug_list(person_drugs)
+    logger.info(f'Total persons to process: {len(person_list)}\nTotal drugs to process: {len(drugs_list)}')
+    for person in person_list:
+        person_drugs = [d for d in drugs_list if d.person_id == person]
+        logger.debug(f'working on..... person: {person}....drug count: {len(person_drugs)}')
+        #lot_generator = LotGenerator(person_id=person)
+        lot_generator = LotGenerator(person_id=person, lot_rules=lot_rules)
+        lot_generator.set_drug_list(person_drugs)
 
-            #print(lot_generator)
-            #print(lot_generator.lot_rules)
-
-            lot_generator.generate()
-            lots.append(lot_generator)
+        lot_generator.generate()
+        lots.append(lot_generator)
 
     return lots
 
-    # print out the last lot.. 
-    for lot in lot_generator.lots:
-        print(lot)
 
 
 if __name__ == '__main__':
-    # get some test data from a file
+
+    # prep some data from a test file... 
     me_dir = os.path.dirname(os.path.realpath(__file__))
     file_name = 'data/drug_exposure.csv'  
     a_file = os.path.join(me_dir, file_name)
-
-    
-    # get the lot rules configured in the lot_rule_settings folder yml files by the rule_set.name
-    lot_rules = get_settings(rule_set_name='test')
-
 
     # get some data from a csv of synth omop.drug_exposure
     # into a list of Drug class types
@@ -65,9 +53,16 @@ if __name__ == '__main__':
                     start_dt=datetime.strptime(row['drug_exposure_start_date'], '%Y-%m-%d').date()
                 ))
 
+    #############################################
     # process LOTs
-    lots = process_lots(person_list=person_list, drugs_list=drugs_list, lot_rules=lot_rules)
+    #############################################
+    # get the lot rules configured in the lot_rule_settings folder yml files by the rule_set.name
+    lot_rules = get_settings(rule_set_name='test')
+    lots = process_lots(person_list=person_list, drugs_list=drugs_list, lot_rules=None)
 
     # print out the last lot.. 
+    # drugs: 
+    print(lots[-1])
+    # lots
     for lot in lots[-1].lots:
-        print(lot)
+        print({'lot': lot.lot, 'start_date': str(lot.start), 'end_date': str(lot.end), 'regimen': lot.get_regimen()})
