@@ -1,9 +1,10 @@
 from datetime import date
-from .lot_logger import logger
+import logging
 from .LineOfTherapy import Drug, LineOfTherapy
 from .LotRules import FactLotNextDrugs, LotCondition, LotAction, LotRule
 from .LotRuleConfig import LotRuleConfig
 
+logger = logging.getLogger('lot_logger')
 
 INIT_DAYS = 28
 ALLOWABLE_GAP = 90
@@ -43,8 +44,6 @@ class LotGenerator():
                 continue
             
             logger.debug(self.get_current_lot())
-            #for d in self.next_drugs:
-            #    print(d)
 
             # if gap ok and drops ok and adds okay then add
             # else advance lot (flag maint?)
@@ -126,13 +125,13 @@ class LotGenerator():
     def set_maintenance_flag(self):
         self.get_current_lot().is_maint = True
 
-    def advance_into_maintenance(self):
-        self.advance_lot()
+    def advance_into_maintenance(self, msg: str = None):
+        self.advance_lot(msg=msg)
 
     def do_nothing(self): 
         pass
 
-    def advance_lot(self) -> None:
+    def advance_lot(self, msg: str = None) -> None:
         self.lot_number += 1
         self.lots.append(LineOfTherapy(self.lot_number, drugs=self.next_drugs))
         self.next_drugs = None
@@ -149,7 +148,7 @@ class LotGenerator():
         lot.lot_rule = lot_rule
         self.next_drugs = None
 
-    def eval_rules(self, rule_type: str, fact: FactLotNextDrugs, default_advance=True) -> None:
+    def eval_rules(self, rule_type: str, fact: FactLotNextDrugs, default_advance=True, msg: str = None) -> None:
         '''
             if there are not other rules to apply actions then 
             advance the lot
@@ -166,7 +165,7 @@ class LotGenerator():
                 lot_rule.evaluate(fact)
 
             if default_advance and not self.next_drugs is None:
-                self.advance_lot()
+                self.advance_lot(msg=msg)
 
 
 

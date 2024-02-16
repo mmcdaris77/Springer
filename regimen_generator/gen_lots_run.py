@@ -5,12 +5,16 @@ from datetime import datetime
 from LotGenerator.LineOfTherapy import Drug
 from LotGenerator.LotGenerator import LotGenerator
 from LotGenerator.LotRuleConfig import get_settings
+from LotGenerator.lot_logger import logger
 
+logger = logger()
+
+# get some test data from a file
 me_dir = os.path.dirname(os.path.realpath(__file__))
 file_name = 'data/drug_exposure.csv'  
 a_file = os.path.join(me_dir, file_name)
 
-
+# get the lot rules configured in the lot_rule_settings folder yml files by the rule_set.name
 lot_rules = get_settings(rule_set_name='test')
 
 
@@ -36,22 +40,24 @@ with open(a_file, 'r') as f:
 lots = []
 print(f'Total persons to process: {len(person_list)}\nTotal drugs to process: {len(drugs_list)}')
 for idx, person in enumerate(person_list):
-    if person == '1127':  #  559   1127
-    #if 1==1':
+    #if person == '1127':  #  559   1127
+    if 1==1:
         person_drugs = [d for d in drugs_list if d.person_id == person]
-        print(f'working on..... person: {person}....drug count: {len(person_drugs)}')
+        #print(f'working on..... person: {person}....drug count: {len(person_drugs)}')
         #lot_generator = LotGenerator(person_id=person)
         lot_generator = LotGenerator(person_id=person, lot_rules=lot_rules)
         lot_generator.set_drug_list(person_drugs)
 
-        print(lot_generator)
-        print(lot_generator.lot_rules)
+        #print(lot_generator)
+        #print(lot_generator.lot_rules)
 
         lot_generator.generate()
         lots.append(lot_generator)
 
-        for lot in lot_generator.lots:
-            print(lot)
+# print out the last lot.. 
+for lot in lot_generator.lots:
+    print(lot)
+
 
 
 
