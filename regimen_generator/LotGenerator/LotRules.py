@@ -22,8 +22,8 @@ class FactLotNextDrugs():
         '''return True is min new drugs start date is within allowable gap'''
         start_dtd: date = self.lot.end
         end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
-        logger.debug(f'is_within_allowable_gap: {allowable_gap}: {0 <= (end_dtd - start_dtd).days < allowable_gap}')
-        return 0 <= (end_dtd - start_dtd).days < allowable_gap
+        logger.debug(f'is_within_allowable_gap: {allowable_gap}: {0 <= allowable_gap <= (end_dtd - start_dtd).days}')
+        return 0 <= allowable_gap <= (end_dtd - start_dtd).days
     
     def is_within_init_range(self, allowable_gap=28) -> bool:
         '''return Flase if the new drugs are beyond the init range'''
@@ -31,7 +31,7 @@ class FactLotNextDrugs():
         end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
         return 0 <= (end_dtd - start_dtd).days < allowable_gap
     
-    def has_drug_additions(self, lot_rules: dict, allowable_gap:int = 0) -> bool: 
+    def has_drug_additions(self, allowable_gap:int = 0) -> bool: 
         '''return True if new drugs were added and are not in an exception'''
         rtn = False
         for d in self.next_drugs:
@@ -40,11 +40,11 @@ class FactLotNextDrugs():
         logger.debug(f'has_drug_additions: {rtn}')
         return rtn
     
-    def has_drug_drops(self, lot_rules: dict, allowable_gap:int = 0) -> bool: 
+    def has_drug_drops(self, allowable_gap:int = 0) -> bool: 
         '''return True if drugs were dropped and are not in an exception'''
         rtn = False
         for d in [x.drug_name for x in self.lot.drugs]:
-            if d not in self.next_drugs and self.is_past_allowable_gap(allowable_gap):
+            if d not in [x.drug_name for x in self.next_drugs] and self.is_past_allowable_gap(allowable_gap):
                 rtn = True
         logger.debug(f'has_drug_drops: {rtn}')
         return rtn
