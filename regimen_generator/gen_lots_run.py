@@ -7,7 +7,7 @@ from LotGenerator.LotGenerator import LotGenerator
 from LotGenerator.LotRuleConfig import get_settings
 from LotGenerator.lot_logger import logger
 
-logger = logger()
+logger = logger(log_debug=False)
 
 # get some test data from a file
 me_dir = os.path.dirname(os.path.realpath(__file__))
