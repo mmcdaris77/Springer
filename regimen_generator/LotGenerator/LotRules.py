@@ -1,8 +1,9 @@
 from typing import Callable
 from datetime import date
-from .lot_logger import logger
+import logging
 from .LineOfTherapy import LineOfTherapy, Drug
 
+logger = logging.getLogger('lot_logger')
 
 #rules: 
 class FactLotNextDrugs():

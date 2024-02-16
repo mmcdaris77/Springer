@@ -2,9 +2,10 @@ import yaml
 import os
 import glob 
 from schema import Schema, Optional, And
-from .lot_logger import logger
+import logging
 from .LotRules import LotCondition, LotAction
 
+logger = logging.getLogger('lot_logger')
 
 me_dir = os.path.dirname(os.path.realpath(__file__))
 RULE_SETTINGS_PATH = os.path.join(os.path.dirname(me_dir), 'lot_rule_settings')
