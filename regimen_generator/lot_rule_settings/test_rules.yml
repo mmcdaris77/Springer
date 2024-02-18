@@ -23,8 +23,41 @@ rule_sets:
               allowable_gap: 60
         actions:
           - do_nothing:
+      - name: gap_rule_inj_drugs
+        conditions:
+          - is_past_allowable_gap:
+              allowable_gap: 90
+              therapy_routes:
+                - 'IV'
+                - 'Injectable'
+                - 'SC'
+                - 'subcutaneous'
+        actions:
+          - advance_lot:
+      - name: gap_rule_oral_drugs
+        conditions:
+          - is_past_allowable_gap:
+              allowable_gap: 180
+              therapy_routes:
+                - 'Oral'
+                - 'by mouth'
+        actions:
+          - advance_lot:
 
     addition_rules:
+      - name: swappable_rule_1
+        conditions:
+          - has_drug_additions:
+              swap_drugs:
+                -
+                  - 'drug_a'
+                  - 'drug_c'
+                -
+                  - 'drug_b'
+                  - 'drug_x'
+        actions:
+          - add_drugs_to_lot:
+          
       - name: add_rule_1
         conditions:
           - new_drugs_contains_drugs: 
@@ -34,6 +67,7 @@ rule_sets:
               allowable_gap: 180
         actions:
           - add_drugs_to_lot:
+
    
   - name: rule_config_test_2
     gap_rules: 

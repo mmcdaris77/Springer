@@ -5,25 +5,36 @@ from .LineOfTherapy import LineOfTherapy, Drug
 
 logger = logging.getLogger('lot_logger')
 
+none_to_empty_str = lambda s: s or ''
+
 #rules: 
 class FactLotNextDrugs():
     def __init__(self, lot: LineOfTherapy, next_drugs: list[Drug]):
         self.lot: LineOfTherapy = lot 
         self.next_drugs: list[Drug] = next_drugs
 
-    def is_past_allowable_gap(self, allowable_gap=90) -> bool:
+    def is_past_allowable_gap(self, allowable_gap=90, therapy_routes: list[str] = []) -> bool:
         '''return False is min new drugs start date is beyond the allowable gap'''
         start_dtd: date = self.lot.end
-        end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
-        logger.debug(f'is_past_allowable_gap: {allowable_gap}: {(end_dtd - start_dtd).days > allowable_gap}')
+        if len(therapy_routes) == 0:
+            drugs_to_consider = self.next_drugs
+        else:
+            drugs_to_consider = self.__get_next_drugs_by_therapy_routes(therapy_routes)
+
+        if len(drugs_to_consider) == 0:
+            return False
+        
+        end_dtd: date = min(drugs_to_consider, key=lambda x:x.start_dt).start_dt
+        logger.debug(f'is_past_allowable_gap:  allowable {allowable_gap}  actual: {(end_dtd - start_dtd).days}  response:{(end_dtd - start_dtd).days > allowable_gap}  therapy_routes: {therapy_routes}')
         return (end_dtd - start_dtd).days > allowable_gap
 
     def is_within_allowable_gap(self, allowable_gap=90) -> bool:
-        '''return True is min new drugs start date is within allowable gap'''
+        '''return True if min new drugs start date is within allowable gap'''
         start_dtd: date = self.lot.end
         end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
         logger.debug(f'is_within_allowable_gap: {allowable_gap}: {0 <= allowable_gap <= (end_dtd - start_dtd).days}')
         return 0 <= allowable_gap <= (end_dtd - start_dtd).days
+    
     
     def is_within_init_range(self, allowable_gap=28) -> bool:
         '''return Flase if the new drugs are beyond the init range'''
@@ -31,14 +42,43 @@ class FactLotNextDrugs():
         end_dtd: date = min(self.next_drugs, key=lambda x:x.start_dt).start_dt
         return 0 <= (end_dtd - start_dtd).days < allowable_gap
     
-    def has_drug_additions(self, allowable_gap:int = 0) -> bool: 
+    def has_drug_additions(self, swap_drugs: list[list[str]] = []) -> bool: 
         '''return True if new drugs were added and are not in an exception'''
-        rtn = False
+
+        drug_results = []
         for d in self.next_drugs:
-            if d not in [x.drug_name for x in self.lot.drugs] and self.is_past_allowable_gap(allowable_gap):
-                rtn = True
-        logger.debug(f'has_drug_additions: {rtn}')
+            # if not in lot and not swappable then it is True that its an addition
+            if d.drug_name.lower() not in [x.drug_name.lower() for x in self.lot.drugs] \
+                and not self.__is_swappable(d.drug_name.lower(), swap_drugs):
+                drug_results.append(True)
+            else: 
+                drug_results.append(False)
+
+        rtn = any(drug_results)
+        logger.debug(f'has_drug_additions: {rtn}   swap_drugs: {swap_drugs}')
+        logger.debug(f'............ next_drugs: {[x.drug_name.lower() for x in self.next_drugs]}       regimen: {self.lot.get_regimen()}')
+        logger.debug(f'............ {drug_results}')
         return rtn
+    
+    def __is_swappable(self, drug_name: str, swap_list: list[list[str]]) -> bool:
+        
+        def get_swap_list(new_drug: str) -> list[str]: 
+            for i in swap_list:
+                if new_drug.lower() in [x.lower() for x in i]:
+                    return i
+            return []
+        
+        swap_drugs = get_swap_list(drug_name)
+        # if there aren't any swappable drugs then just return true
+        if len(swap_drugs) == 0:
+            return False
+        
+        for drug in self.lot.get_regimen():
+            if drug.lower() in [x.lower() for x in swap_drugs]:
+                return True
+        return False
+
+
     
     def has_drug_drops(self, allowable_gap:int = 0) -> bool: 
         '''return True if drugs were dropped and are not in an exception'''
@@ -61,6 +101,22 @@ class FactLotNextDrugs():
         logger.debug(f'new_drugs_contains_drugs: {drugs}: {rtn}')
         return rtn
     
+    def new_drugs_contains_therapy_route(self, routes: list[str]) -> bool: 
+        rtn = False
+        for d in self.next_drugs:
+            if d.therapy_route in routes:
+                rtn = True 
+        logger.debug(f'new_drugs_contains_therapy_route: {routes}: {rtn}')
+        return rtn
+    
+    def new_drugs_contains_drug_class(self, drug_classs: list[str]) -> bool: 
+        rtn = False
+        for d in self.next_drugs:
+            if d.drug_class in drug_classs:
+                rtn = True 
+        logger.debug(f'new_drugs_contains_drug_class: {drug_classs}: {rtn}')
+        return rtn
+    
     def new_drugs_contains_drug_class(self, classes: list[str]) -> bool: 
         rtn = False
         for d in self.next_drugs:
@@ -76,6 +132,18 @@ class FactLotNextDrugs():
                 rtn = True
         logger.debug(f'regimen_contains_drug_class: {rtn}')
         return rtn
+    
+
+    def __get_new_drugs(self):
+        new_drugs_not_in_regimen = []
+        for d in self.next_drugs:
+            if not d in self.lot.get_regimen():
+                new_drugs_not_in_regimen.append(d.drug_name)
+        return new_drugs_not_in_regimen
+    
+    def __get_next_drugs_by_therapy_routes(self, therapy_routes: list[str] = []) -> list[Drug]:
+        return [x for x in self.next_drugs if x.therapy_route.upper() in [rt.upper() for rt in therapy_routes]]
+
 
 
 class LotCondition():

@@ -1,6 +1,7 @@
 import yaml
 import os
 import glob 
+import json
 from schema import Schema, Optional, And
 import logging
 from .LotRules import LotCondition, LotAction
@@ -31,7 +32,7 @@ class Setting:
         
     def get_configured_setting(self, obj: any):
         if not hasattr(obj, self.func_name):
-            logger.error(f'pbj_type: {type(obj)} --> function not found: {self.func_name}')
+            logger.error(f'obj_type: {type(obj)} --> function not found: {self.func_name}')
         else:
             func = (lambda k, v: lambda fact: getattr(obj, self.func_name)(**self.func_args))(self.func_name, self.func_args)
             return self.func_args, func
@@ -103,6 +104,9 @@ class LotRuleConfig:
         rtn += f'\n\tLotRuleConfig.addition_rules'
         for i in self.addition_rules:
             rtn += f'{i}'
+        rtn += f'\n\tLotRuleConfig.drop_rules'
+        for i in self.drop_rules:
+            rtn += f'{i}'
         return rtn
     
 
@@ -115,9 +119,9 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'new_drugs_contains_drugs': {'drugs': list[str]}}), 
         Schema({'is_mono_therapy': None}), 
         Schema({'has_drug_drops': None}), 
-        Schema({'has_drug_additions': None}), 
+        Schema({'has_drug_additions': {Optional('swap_drugs'): list[list[str]]}}), 
         Schema({'is_within_allowable_gap': {'allowable_gap': int}}), 
-        Schema({'is_past_allowable_gap': {'allowable_gap': int}})
+        Schema({'is_past_allowable_gap': {'allowable_gap': int, Optional('therapy_routes'): list[str]}})
     ]
 
     ACTION_DEFS = [
@@ -173,6 +177,7 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
     try:
         return config_schema.validate(data)
     except Exception as e:
+        logger.error(json.dumps(data, indent=4))
         logger.error(f'ERROR validating the lot_rules yml configuration: {rule_set_name}s\n{e}')
         exit()
 
@@ -180,7 +185,8 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
 def get_settings(rule_set_name: str, config_path: str = RULE_SETTINGS_PATH) -> LotRuleConfig:
     for yml_file in glob.glob(os.path.join(config_path, '*.yml')):
         with open(yml_file, 'r') as f:
-            data = validate_schema(rule_set_name, yaml.safe_load(f))
+            data = yaml.safe_load(f)
+            data = validate_schema(rule_set_name, data)
 
         for rule_set in data['rule_sets']:
             if rule_set['name'] == rule_set_name:
