@@ -2,11 +2,13 @@ from datetime import date, timedelta
 
 
 class Drug():
-    def __init__(self, person_id: str, drug_name: str, start_dt: date, end_dt: date = None) -> None:
+    def __init__(self, person_id: str, drug_name: str, start_dt: date, end_dt: date = None, drug_class: str = '',
+                 drug_type: str = '', therapy_route: str = '') -> None:
         self.person_id: str = person_id
         self.drug_name: str = drug_name
-        self.drug_class: str = None
-        self.drug_type: str = None
+        self.drug_class: str = drug_class
+        self.drug_type: str = drug_type
+        self.therapy_route: str = therapy_route
         self.start_dt: date = start_dt
         self.end_dt: date = self.default_end_date(end_dt)
     

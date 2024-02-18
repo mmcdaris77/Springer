@@ -10,7 +10,7 @@ from LotGenerator.lot_logger import logger
 logger = logger(log_debug=False)
 
 
-def process_lots(person_list: list[str], drugs_list: list[Drug], lot_rules=LotRuleConfig) -> list[LotGenerator]:
+def process_lots(person_list: list[str], drugs_list: list[Drug], lot_rules=LotRuleConfig()) -> list[LotGenerator]:
     # for each person generate lots and append them to the list
         # get patient drugs and load them in an instance of LotGenerator
     lots = []
@@ -58,7 +58,8 @@ if __name__ == '__main__':
     #############################################
     # get the lot rules configured in the lot_rule_settings folder yml files by the rule_set.name
     lot_rules = get_settings(rule_set_name='test')
-    lots = process_lots(person_list=person_list, drugs_list=drugs_list, lot_rules=None)
+    #lots = process_lots(person_list=person_list, drugs_list=drugs_list, lot_rules=None)
+    lots = process_lots(person_list=person_list, drugs_list=drugs_list, lot_rules=lot_rules)
 
     # print out the last lot.. 
     # drugs: 

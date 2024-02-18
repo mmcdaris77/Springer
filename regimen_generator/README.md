@@ -15,14 +15,15 @@ The idea is to make something that can be configurable for different variations.
 ### Condition Functions
 |Name|Args|Desc|
 | ----------- | ----------- | ----------- |
-| is_past_allowable_gap | allowable_gap: int | returns True if min drug date in next_drugs is beyond the allowable gap, else False |
+| is_past_allowable_gap | allowable_gap: int <br>Optional(therapy_routes: list[str]) | returns True if min drug date in next_drugs is beyond the allowable gap, else False |
 | is_within_allowable_gap | allowable_gap: int | returns True if min drug date in next_drugs is within the allowable gap, else False |
-| has_drug_additions | n/a | returns True if there are drugs in next_drugs that are not in the current LOT regimen, else False |
+| has_drug_additions | swap_drugs: list[list[str]] | returns True if there are drugs in next_drugs that are not in the current LOT regimen and drugs are not mapped in a swap list, else False |
 | has_drug_drops | n/a | returns True if there are drugs in the current LOT regimen that are not in next_drugs, else False |
 | is_mono_therapy | n/a | returns True if the current LOT regimen contains only one drug, else False |
 | new_drugs_contains_drugs | drugs: list[str] | returns True if next_drugs contains any drug from a list of drugs, else False |
 | new_drugs_contains_drug_class | classes: list[str] | returns True if next_drugs contains any class from a list of classes, else False |
 | regimen_contains_drug_class | classes: list[str] | returns True if current LOT regimen contains any class from a list of classes, else False |
+
 
 ### Action Functions
 |Name|Desc|
