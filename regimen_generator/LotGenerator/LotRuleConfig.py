@@ -35,7 +35,7 @@ class Setting:
             logger.error(f'obj_type: {type(obj)} --> function not found: {self.func_name}')
         else:
             func = (lambda k, v: lambda fact: getattr(obj, self.func_name)(**self.func_args))(self.func_name, self.func_args)
-            return self.func_args, func
+            return f'{self.func_name} : {self.func_args}', func
 
         
     def __str__(self) -> str:
@@ -84,6 +84,8 @@ class RuleSetting:
 
 class LotRuleConfig:
     def __init__(self) -> None:
+        self.init_days: int = 28
+        self.allowable_drug_gap = 80
         self.gap_rules: list[RuleSetting] = []
         self.addition_rules: list[RuleSetting] = []
         self.drop_rules: list[RuleSetting] = []
@@ -98,6 +100,8 @@ class LotRuleConfig:
     
     def __str__(self) -> str:
         rtn = f'LotRuleConfig: '
+        rtn += f'\n\tinit_days: {self.init_days}'
+        rtn += f'\n\allowable_drug_gap: {self.allowable_drug_gap}'
         rtn += f'\n\tLotRuleConfig.gap_rules'
         for i in self.gap_rules:
             rtn += f'{i}'
@@ -161,6 +165,8 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
             'rule_sets': [ 
                 {
                     'name': str, 
+                    'init_days': int,
+                    'allowable_drug_gap': int,
                     valid_rule_set: [
                         {
                             'name': str, 
@@ -191,7 +197,10 @@ def get_settings(rule_set_name: str, config_path: str = RULE_SETTINGS_PATH) -> L
         for rule_set in data['rule_sets']:
             if rule_set['name'] == rule_set_name:
                 generator_config = LotRuleConfig()
+                generator_config.init_days = rule_set['init_days']
+                generator_config.allowable_drug_gap = rule_set['allowable_drug_gap']
                 for k, v in rule_set.items():
+
                     priority = 0
                     if k in RULE_TYPES:
                         for rule in rule_set[k]:

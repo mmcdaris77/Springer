@@ -1,6 +1,7 @@
 
 ### This is an example of a rules engine to generate Lines Of Therapy from drug data. 
 The idea is to make something that can be configurable for different variations. 
+- python verison 3.10
 
 
 ### Features
@@ -41,4 +42,3 @@ The idea is to make something that can be configurable for different variations.
 - next_drugs should be able to get more than just next date 
     - ex: all dates in first init_days
     - ex: all dates after init_days where no gap and no drop/adds
-- unit test
