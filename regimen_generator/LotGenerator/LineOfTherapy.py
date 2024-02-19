@@ -21,6 +21,22 @@ class Drug():
     def __str__(self) -> str:
         return f'Drug: {self.drug_name} --> StartDate: {self.start_dt} --> EndDate: {self.end_dt}'
 
+class OtherTherapy():
+    def __init__(self, person_id: str, therapy_name: str, start_dt: date, end_dt: date = None) -> None:
+        self.person_id: str = person_id
+        self.therapy_name: str = therapy_name
+        self.start_dt: date = start_dt
+        self.end_dt: date = self.default_end_date(end_dt)
+    
+    def default_end_date(self, end_dt): 
+        if end_dt is None:
+            return self.start_dt
+        else:
+            return end_dt
+
+    def __str__(self) -> str:
+        return f'Drug: {self.drug_name} --> StartDate: {self.start_dt} --> EndDate: {self.end_dt}'
+    
 
 class LineOfTherapy():
     def __init__(self, lot: int, drugs: list[Drug] = None, is_maint: bool = False) -> None: 
@@ -29,11 +45,12 @@ class LineOfTherapy():
         self.start: date 
         self.end: date
         self.is_maint: bool = is_maint
-        self.other_therapy: list = []
         self.lot_rule: str
+        self.lot_flags: dict = {}
 
         self.set_start_date()
         self.set_end_date()
+
 
     def set_end_date(self, offset: int = 0): 
         _max_end_dt = max(self.drugs, key=lambda x:x.end_dt).end_dt
@@ -74,6 +91,7 @@ class LineOfTherapy():
                     \n\tend: {self.end} \
                     \n\tdrug_cnt: {len(self.drugs)} \
                     \n\tregimen: {self.get_regimen()} \
+                    \n\tflags: {self.lot_flags} \
                 '
         rtn += '\n'+'-'*60
         for d in self.drugs:
