@@ -15,6 +15,7 @@ def process_lots(person_list: list[str], drugs_list: list[Drug], lot_rules=LotRu
         # get patient drugs and load them in an instance of LotGenerator
     lots = []
     logger.info(f'Total persons to process: {len(person_list)}\nTotal drugs to process: {len(drugs_list)}')
+    logger.info(f'{str(lot_rules)}')
     for person in person_list:
         person_drugs = [d for d in drugs_list if d.person_id == person]
         logger.debug(f'working on..... person: {person}....drug count: {len(person_drugs)}')

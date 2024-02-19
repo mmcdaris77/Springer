@@ -78,13 +78,12 @@ class FactLotNextDrugs():
                 return True
         return False
 
-
     
-    def has_drug_drops(self, allowable_gap:int = 0) -> bool: 
+    def has_drug_drops(self) -> bool: 
         '''return True if drugs were dropped and are not in an exception'''
         rtn = False
         for d in [x.drug_name for x in self.lot.drugs]:
-            if d not in [x.drug_name for x in self.next_drugs] and self.is_past_allowable_gap(allowable_gap):
+            if d not in [x.drug_name for x in self.next_drugs]:
                 rtn = True
         logger.debug(f'has_drug_drops: {rtn}')
         return rtn
@@ -192,6 +191,8 @@ class LotRule():
     def evaluate(self, fact: FactLotNextDrugs):
         def fact_generator(conditions: list[LotCondition], fact: FactLotNextDrugs):
             results = [condition.eval_func(fact) for condition in conditions]
+            #rule_conditions = ' ~ '.join([c.name for c in conditions])
+            #print(rule_conditions)
 
             if all(results):
                 return 'all', fact

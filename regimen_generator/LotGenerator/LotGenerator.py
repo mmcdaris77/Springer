@@ -10,11 +10,11 @@ INIT_DAYS = 28
 ALLOWABLE_GAP = 90
 
 class LotGenerator():
-    def __init__(self, person_id: str, lot_rules: LotRuleConfig, init_drug_days: int = INIT_DAYS, allowable_drug_gap: int = ALLOWABLE_GAP) -> None:
+    def __init__(self, person_id: str, lot_rules: LotRuleConfig) -> None:
         self.person_id: str = person_id
         self.patient_drugs: list[Drug] = []
-        self.init_drug_days: int = init_drug_days
-        self.allowable_drug_gap: int = allowable_drug_gap
+        self.init_drug_days: int = INIT_DAYS
+        self.allowable_drug_gap: int = ALLOWABLE_GAP
         self.drug_start_dates: list = []
         self.lot_number: int = 1
         self.lots: list[LineOfTherapy] = []
@@ -25,6 +25,8 @@ class LotGenerator():
         if not isinstance(lot_rules, LotRuleConfig):
             return LotRuleConfig()
         else: 
+            self.init_drug_days = lot_rules.init_days
+            self.allowable_drug_gap = lot_rules.allowable_drug_gap
             return lot_rules
 
     def set_drug_list(self, drug_list: list[Drug]) -> None: 

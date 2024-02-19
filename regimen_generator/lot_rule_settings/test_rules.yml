@@ -2,6 +2,8 @@ version: '0.1'
 
 rule_sets:
   - name: test
+    init_days: 28
+    allowable_drug_gap: 80
     gap_rules: 
       - name: gap_rule_1
         conditions:
@@ -70,6 +72,8 @@ rule_sets:
 
    
   - name: rule_config_test_2
+    init_days: 28
+    allowable_drug_gap: 80
     gap_rules: 
       - name: gap_rule_1
         conditions:
