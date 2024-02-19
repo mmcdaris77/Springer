@@ -1,7 +1,7 @@
 from typing import Callable
-from datetime import date
+from datetime import date, timedelta
 import logging
-from .LineOfTherapy import LineOfTherapy, Drug
+from .LineOfTherapy import LineOfTherapy, Drug, OtherTherapy
 
 logger = logging.getLogger('lot_logger')
 
@@ -9,9 +9,10 @@ none_to_empty_str = lambda s: s or ''
 
 #rules: 
 class FactLotNextDrugs():
-    def __init__(self, lot: LineOfTherapy, next_drugs: list[Drug]):
+    def __init__(self, lot: LineOfTherapy, next_drugs: list[Drug], other_therapies: list[OtherTherapy] = []):
         self.lot: LineOfTherapy = lot 
         self.next_drugs: list[Drug] = next_drugs
+        self.other_therapies: list[OtherTherapy] = other_therapies
 
     def is_past_allowable_gap(self, allowable_gap=90, therapy_routes: list[str] = []) -> bool:
         '''return False is min new drugs start date is beyond the allowable gap'''
@@ -131,6 +132,19 @@ class FactLotNextDrugs():
                 rtn = True
         logger.debug(f'regimen_contains_drug_class: {rtn}')
         return rtn
+    
+    def has_other_therapy_by_lot_start(self, therapy_name: str, days_before_lot_start: int, days_after_lot_start: int) -> bool:
+        if days_before_lot_start < 0:
+            days_before_lot_start = days_before_lot_start * -1
+        _lower_dt = self.lot.start - timedelta(days=days_before_lot_start)
+        _upper_dt = self.lot.start + timedelta(days=days_after_lot_start)
+
+        for t in self.other_therapies:
+            if t.therapy_name.lower() == therapy_name.lower():
+                if _lower_dt <= t.start_dt <= _upper_dt:
+                    return True
+        return False
+
     
 
     def __get_new_drugs(self):

@@ -24,16 +24,19 @@ The idea is to make something that can be configurable for different variations.
 | new_drugs_contains_drugs | drugs: list[str] | returns True if next_drugs contains any drug from a list of drugs, else False |
 | new_drugs_contains_drug_class | classes: list[str] | returns True if next_drugs contains any class from a list of classes, else False |
 | regimen_contains_drug_class | classes: list[str] | returns True if current LOT regimen contains any class from a list of classes, else False |
+| has_other_therapy_by_lot_start | therapy_name: str <br>days_before_lot_start: int <br>days_after_lot_start: int | returns True if there is an 'other thereapy' within the range |
 
 
 ### Action Functions
-|Name|Desc|
-| ----------- | ----------- |
-| add_drugs_to_lot | add next_drugs to the current LOT |
-| advance_lot | advance to the next LOT and init with the current next_drugs |
-| set_maintenance_flag | set the maint_flag = True for the current LOT |
-| advance_into_maintenance | advance to the next LOT and init with the current next_drugs and set maint_flag = True |
-| do_nothing | go to the next rule |
+|Name|Args|Desc|
+| ----------- | ----------- | ----------- |
+| add_drugs_to_lot | n/a | add next_drugs to the current LOT |
+| advance_lot | n/a | advance to the next LOT and init with the current next_drugs |
+| set_maintenance_flag | n/a | set the maint_flag = True for the current LOT |
+| advance_into_maintenance | n/a | advance to the next LOT and init with the current next_drugs and set maint_flag = True |
+| do_nothing | n/a | go to the next rule |
+| add_lot_flag_true | flag_name: str | add a lot flag = True |
+| add_lot_flag_false | flag_name: str | add a lot flag = False |
 
 ### Future
 - add end date features
@@ -42,3 +45,5 @@ The idea is to make something that can be configurable for different variations.
 - next_drugs should be able to get more than just next date 
     - ex: all dates in first init_days
     - ex: all dates after init_days where no gap and no drop/adds
+- post process actions
+    - by lot/regimen

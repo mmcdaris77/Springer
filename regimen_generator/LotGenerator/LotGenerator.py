@@ -1,6 +1,6 @@
 from datetime import date
 import logging
-from .LineOfTherapy import Drug, LineOfTherapy
+from .LineOfTherapy import Drug, LineOfTherapy, OtherTherapy
 from .LotRules import FactLotNextDrugs, LotCondition, LotAction, LotRule
 from .LotRuleConfig import LotRuleConfig
 
@@ -20,6 +20,7 @@ class LotGenerator():
         self.lots: list[LineOfTherapy] = []
         self.lot_rules = self.set_lot_rules(lot_rules)
         self.next_drugs: list[Drug]
+        self.other_therapies: list[OtherTherapy]
 
     def set_lot_rules(self, lot_rules: LotRuleConfig) -> LotRuleConfig:
         if not isinstance(lot_rules, LotRuleConfig):
@@ -36,6 +37,9 @@ class LotGenerator():
 
         self.patient_drugs = sorted(drug_list, key=lambda d: d.start_dt) 
         self.drug_start_dates = sorted(list(set([x.start_dt for x in self.patient_drugs])))
+
+    def set_other_therapies_list(self, other_therapies: list[OtherTherapy]) -> None:
+        self.other_therapies = sorted(other_therapies, key=lambda t: t.start_dt)
 
     def generate(self) -> None: 
         iter_cnt = 0
@@ -155,6 +159,14 @@ class LotGenerator():
         lot.add_drugs(self.next_drugs)
         lot.lot_rule = lot_rule
         self.next_drugs = None
+
+    def add_lot_flag_true(self, flag_name: str) -> None:
+        if not flag_name is None:
+            self.get_current_lot().lot_flags[flag_name] = True
+
+    def add_lot_flag_false(self, flag_name: str) -> None:
+        if not flag_name is None:
+            self.get_current_lot().lot_flags[flag_name] = False
 
     def eval_rules(self, rule_type: str, fact: FactLotNextDrugs, default_advance=True, msg: str = None) -> None:
         '''

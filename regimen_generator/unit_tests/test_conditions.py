@@ -4,7 +4,7 @@ sys.path.append(".")
 import unittest
 from datetime import datetime, date
 from LotGenerator.LotRules import FactLotNextDrugs
-from LotGenerator.LineOfTherapy import LineOfTherapy, Drug
+from LotGenerator.LineOfTherapy import LineOfTherapy, Drug, OtherTherapy
 from LotGenerator.lot_logger import logger
 logger = logger('lot_logger')
 
@@ -56,6 +56,8 @@ next_drugs = [
     Drug('person_1', 'drug_a', to_date('2012-07-15'), therapy_route='IV')
 ]
 case_5_fact_lot_next_drugs = FactLotNextDrugs(lot=line_of_therapy, next_drugs=next_drugs)
+
+
 class TestFactLotNextDrugs(unittest.TestCase):
 
     def test_is_mono_therapy(self):
@@ -109,6 +111,21 @@ class TestFactLotNextDrugs(unittest.TestCase):
         #######################################################################
         self.assertTrue(case_5_fact_lot_next_drugs.is_past_allowable_gap(allowable_gap=80, therapy_routes=['oral']))
         self.assertFalse(case_5_fact_lot_next_drugs.is_past_allowable_gap(allowable_gap=90, therapy_routes=['oral']))
+
+    def test_has_other_therapy_by_lot_start(self):
+        logger.debug('>>>>>>>>>   START has_other_therapy_by_lot_start <<<<<<<<<<')
+        regimen_drugs = [Drug('person_1', 'drug_a', to_date('2012-05-18'))]
+        line_of_therapy = LineOfTherapy(lot=1, drugs=regimen_drugs)
+        next_drugs = [
+            Drug('person_1', 'drug_b', to_date('2012-08-15'), therapy_route='Oral'),
+            Drug('person_1', 'drug_a', to_date('2012-07-15'), therapy_route='IV')
+        ]
+        other_therapies = [OtherTherapy('person_1', 'surgery', to_date('2012-03-18'), to_date('2012-03-18'))]
+      
+        fact_lot_next_drugs = FactLotNextDrugs(lot=line_of_therapy, next_drugs=next_drugs, other_therapies=other_therapies)
+        self.assertTrue(fact_lot_next_drugs.has_other_therapy_by_lot_start(therapy_name='surgery', days_before_lot_start=90, days_after_lot_start=30))
+        self.assertFalse(fact_lot_next_drugs.has_other_therapy_by_lot_start(therapy_name='surgery', days_before_lot_start=10, days_after_lot_start=10))
+        self.assertFalse(fact_lot_next_drugs.has_other_therapy_by_lot_start(therapy_name='therapeutic phlebotomy', days_before_lot_start=30, days_after_lot_start=30))
 
 
 

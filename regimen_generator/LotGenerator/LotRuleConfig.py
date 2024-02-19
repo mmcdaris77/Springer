@@ -125,7 +125,8 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'has_drug_drops': None}), 
         Schema({'has_drug_additions': {Optional('swap_drugs'): list[list[str]]}}), 
         Schema({'is_within_allowable_gap': {'allowable_gap': int}}), 
-        Schema({'is_past_allowable_gap': {'allowable_gap': int, Optional('therapy_routes'): list[str]}})
+        Schema({'is_past_allowable_gap': {'allowable_gap': int, Optional('therapy_routes'): list[str]}}),
+        Schema({'has_other_therapy_by_lot_start': {'therapy_name': str, 'days_before_lot_start': int, 'days_after_lot_start': int}})
     ]
 
     ACTION_DEFS = [
@@ -133,7 +134,9 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'advance_lot': None}),
         Schema({'set_maintenance_flag': None}),
         Schema({'advance_into_maintenance': None}),
-        Schema({'do_nothing': None})
+        Schema({'do_nothing': None}),
+        Schema({'add_lot_flag_true': {'flag_name': str}}),
+        Schema({'add_lot_flag_false': {'flag_name': str}})
     ]
 
 

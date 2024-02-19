@@ -16,6 +16,8 @@ rule_sets:
               allowable_gap: 5000
         actions:
           - add_drugs_to_lot:
+          - add_lot_flag_true:
+              flag_name: 'squee'
       - name: gap_rule_2
         conditions:
           - new_drugs_contains_drugs: 

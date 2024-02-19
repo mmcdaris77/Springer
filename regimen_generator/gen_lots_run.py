@@ -2,7 +2,7 @@ import csv
 import os
 import datetime
 from datetime import datetime
-from LotGenerator.LineOfTherapy import Drug
+from LotGenerator.LineOfTherapy import Drug, OtherTherapy
 from LotGenerator.LotGenerator import LotGenerator
 from LotGenerator.LotRuleConfig import get_settings, LotRuleConfig
 from LotGenerator.lot_logger import logger
@@ -10,7 +10,7 @@ from LotGenerator.lot_logger import logger
 logger = logger(log_debug=False)
 
 
-def process_lots(person_list: list[str], drugs_list: list[Drug], lot_rules=LotRuleConfig()) -> list[LotGenerator]:
+def process_lots(person_list: list[str], drugs_list: list[Drug], lot_rules=LotRuleConfig(), other_therapies: list[OtherTherapy] = []) -> list[LotGenerator]:
     # for each person generate lots and append them to the list
         # get patient drugs and load them in an instance of LotGenerator
     lots = []
@@ -18,10 +18,12 @@ def process_lots(person_list: list[str], drugs_list: list[Drug], lot_rules=LotRu
     logger.info(f'{str(lot_rules)}')
     for person in person_list:
         person_drugs = [d for d in drugs_list if d.person_id == person]
+        person_other_therapies = [t for t in other_therapies if t.person_id == person]
         logger.debug(f'working on..... person: {person}....drug count: {len(person_drugs)}')
-        #lot_generator = LotGenerator(person_id=person)
+
         lot_generator = LotGenerator(person_id=person, lot_rules=lot_rules)
         lot_generator.set_drug_list(person_drugs)
+        lot_generator.set_other_therapies_list(person_other_therapies)
 
         lot_generator.generate()
         lots.append(lot_generator)
@@ -66,5 +68,11 @@ if __name__ == '__main__':
     # drugs: 
     print(lots[-1])
     # lots
-    for lot in lots[-1].lots:
-        print({'lot': lot.lot, 'start_date': str(lot.start), 'end_date': str(lot.end), 'regimen': lot.get_regimen()})
+    for plot in lots:
+        #print(plot.person_id)
+        if plot.person_id == '567':
+            for lot in plot.lots:
+                print({'lot': lot.lot, 'start_date': str(lot.start), 'end_date': str(lot.end), 'regimen': lot.get_regimen(), 'flags': lot.lot_flags})
+
+
+
