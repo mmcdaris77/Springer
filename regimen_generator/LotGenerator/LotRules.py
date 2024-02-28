@@ -92,6 +92,10 @@ class FactLotNextDrugs():
     def is_mono_therapy(self) -> bool:
         logger.debug(f'is_mono_therapy: {self.lot.is_mono_therapy()}')
         return self.lot.is_mono_therapy()
+            
+    def is_combo_therapy(self) -> bool:
+        logger.debug(f'is_combo_therapy: {not self.lot.is_mono_therapy()}')
+        return not self.lot.is_mono_therapy()
     
     def new_drugs_contains_drugs(self, drugs: list[str]) -> bool: 
         rtn = False
@@ -132,6 +136,18 @@ class FactLotNextDrugs():
                 rtn = True
         logger.debug(f'regimen_contains_drug_class: {rtn}')
         return rtn
+
+    def regimen_contains_therapy_route(self, therapy_route: list[str]) -> bool: 
+        for drug in self.lot.drugs:
+            if drug.therapy_route.lower() in [x.lower() for x in therapy_route]:
+                return True 
+        return False
+    
+    def regimen_contains_any_drug(self, drugs: list[str]) -> bool: 
+        for drug in self.lot.drugs:
+            if drug.drug_name.lower() in [x.lower() for x in drugs]: 
+                return True
+        return False
     
     def has_other_therapy_by_lot_start(self, therapy_name: str, days_before_lot_start: int, days_after_lot_start: int) -> bool:
         if days_before_lot_start < 0:
@@ -144,8 +160,27 @@ class FactLotNextDrugs():
                 if _lower_dt <= t.start_dt <= _upper_dt:
                     return True
         return False
-
     
+    def has_other_therapy_by_lot_end(self, therapy_name: str, days_before_lot_end: int, days_after_lot_end: int) -> bool:
+        if days_before_lot_end < 0:
+            days_before_lot_end = days_before_lot_end * -1
+        _lower_dt = self.lot.end - timedelta(days=days_before_lot_end)
+        _upper_dt = self.lot.end + timedelta(days=days_after_lot_end)
+
+        for t in self.other_therapies:
+            if t.therapy_name.lower() == therapy_name.lower():
+                if _lower_dt <= t.start_dt <= _upper_dt:
+                    return True
+        return False
+    
+    def has_other_therapy_within_lot(self, therapy_name: str) -> bool:
+        for t in self.other_therapies:
+            if t.therapy_name.lower() == therapy_name.lower() and self.lot.start < t.start_dt < self.lot.end:
+                return True 
+        return False 
+    
+
+
 
     def __get_new_drugs(self):
         new_drugs_not_in_regimen = []

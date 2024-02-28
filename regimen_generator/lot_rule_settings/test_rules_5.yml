@@ -1,0 +1,52 @@
+version: '0.1'
+
+rule_sets:
+  - name: test_rules_5
+    init_days: 50
+    allowable_drug_gap: 90
+    
+    gap_rules: 
+      - name: gap_IV_drugs
+        conditions:
+            - is_past_allowable_gap:
+                allowable_gap: 100
+                therapy_routes:
+                  - 'IV'
+                  - 'Injectable'
+                  - 'SQ'
+                  - 'subcutaneous'
+        actions:
+          - advance_lot:
+      - name: gap_oral_drugs
+        conditions:
+          - is_past_allowable_gap:
+              allowable_gap: 65
+              therapy_routes:
+                - 'oral'
+                - 'by mouth'
+                - 'buccal'
+                - 'sublingual'
+        actions:
+          - advance_lot:
+  
+    addition_rules:
+      - name: swap_drugs
+        conditions:
+          - has_drug_additions:
+              swap_drugs:
+                -
+                  - 'drug_a'
+                  - 'drug_b'
+                -
+                  - 'drug_e'
+                  - 'drug_e-abc'
+                  - 'drug_e-xyz'
+        actions:
+          - add_drugs_to_lot:
+
+    drop_rules:
+      - name: drops_dont_advance
+        conditions:
+          - has_drug_drops:
+        actions:
+          - add_drugs_to_lot:

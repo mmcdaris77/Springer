@@ -48,6 +48,27 @@ rule_sets:
         actions:
           - advance_lot:
 
+    end_date_rules:
+      - name: end_date_rule_1
+        conditions:
+          - regimen_contains_any_drug:
+              drugs:
+                - '40213154'
+        actions:
+          - adjust_lot_enddate:
+              num_days: 80
+    
+    on_advance_rules:
+      - name: advance_rule_1
+        conditions:
+          - has_other_therapy_by_lot_end:
+              therapy_name: surgery
+              days_before_lot_end: 30
+              days_after_lot_end: 30
+        actions:
+          - add_lot_flag_true: 
+              flag_name: 'adj'
+
     addition_rules:
       - name: swappable_rule_1
         conditions:
