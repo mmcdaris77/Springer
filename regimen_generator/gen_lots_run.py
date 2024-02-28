@@ -47,7 +47,7 @@ if __name__ == '__main__':
         reader = csv.DictReader(f)
 
         for row in reader:
-            if int(row['drug_concept_id']) > 0:
+            if int(row['drug_concept_id']) > 0 and row['person_id'] == '567':
                 if row['person_id'] not in person_list:
                     person_list.append(row['person_id'])
                 drugs_list.append(Drug(

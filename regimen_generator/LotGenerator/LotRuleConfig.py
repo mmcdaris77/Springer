@@ -6,12 +6,13 @@ from schema import Schema, Optional, And
 import logging
 from .LotRules import LotCondition, LotAction
 
+
 logger = logging.getLogger('lot_logger')
 
 me_dir = os.path.dirname(os.path.realpath(__file__))
 RULE_SETTINGS_PATH = os.path.join(os.path.dirname(me_dir), 'lot_rule_settings')
 
-RULE_TYPES = ['gap_rules', 'addition_rules', 'drop_rules']
+RULE_TYPES = ['gap_rules', 'addition_rules', 'drop_rules', 'end_date_rules', 'on_advance_rules']
 
 '''
     get named configureations from a relitive path
@@ -89,6 +90,8 @@ class LotRuleConfig:
         self.gap_rules: list[RuleSetting] = []
         self.addition_rules: list[RuleSetting] = []
         self.drop_rules: list[RuleSetting] = []
+        self.end_date_rules: list[RuleSetting] = []
+        self.on_advance_rules: list[RuleSetting] = []
         
 
     def get_rules_by_type(self, rule_type: str) -> list[dict]:
@@ -122,12 +125,17 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'new_drugs_contains_drug_class': {'classes': list[str]}}), 
         Schema({'new_drugs_contains_drugs': {'drugs': list[str]}}), 
         Schema({'is_mono_therapy': None}), 
+        Schema({'is_combo_therapy': None}), 
         Schema({'has_drug_drops': None}), 
         Schema({'has_drug_additions': {Optional('swap_drugs'): list[list[str]]}}), 
         Schema({'is_within_allowable_gap': {'allowable_gap': int}}), 
         Schema({'is_past_allowable_gap': {'allowable_gap': int, Optional('therapy_routes'): list[str]}}),
-        Schema({'has_other_therapy_by_lot_start': {'therapy_name': str, 'days_before_lot_start': int, 'days_after_lot_start': int}})
+        Schema({'has_other_therapy_by_lot_start': {'therapy_name': str, 'days_before_lot_start': int, 'days_after_lot_start': int}}),
+        Schema({'has_other_therapy_by_lot_end': {'therapy_name': str, 'days_before_lot_end': int, 'days_after_lot_end': int}}),
+        Schema({'regimen_contains_any_drug': {'drugs': list[str]}}),
+        Schema({'regimen_contains_therapy_route': {'therapy_route': list[str]}}),
     ]
+    
 
     ACTION_DEFS = [
         Schema({'add_drugs_to_lot': None}),
@@ -136,7 +144,9 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'advance_into_maintenance': None}),
         Schema({'do_nothing': None}),
         Schema({'add_lot_flag_true': {'flag_name': str}}),
-        Schema({'add_lot_flag_false': {'flag_name': str}})
+        Schema({'add_lot_flag_false': {'flag_name': str}}),
+        Schema({'add_lot_flag_value': {'flag_name': str, 'flag_value': object}}),
+        Schema({'adjust_lot_enddate': {'num_days': int}})
     ]
 
 

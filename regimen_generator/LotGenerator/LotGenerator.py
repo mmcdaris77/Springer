@@ -3,6 +3,7 @@ import logging
 from .LineOfTherapy import Drug, LineOfTherapy, OtherTherapy
 from .LotRules import FactLotNextDrugs, LotCondition, LotAction, LotRule
 from .LotRuleConfig import LotRuleConfig
+from datetime import datetime, timedelta
 
 logger = logging.getLogger('lot_logger')
 
@@ -123,6 +124,10 @@ class LotGenerator():
                 if start_date == d:
                     self.drug_start_dates.remove(d)
 
+        # check end date rules one last time
+        self.eval_advance_rules('end_date_rules')
+        self.eval_advance_rules('on_advance_rules')
+
     def get_next_date(self): 
         return self.drug_start_dates.pop(0)
 
@@ -144,6 +149,14 @@ class LotGenerator():
         pass
 
     def advance_lot(self, msg: str = None) -> None:
+        ############################################################################
+        ## eval lot end rules
+        ############################################################################
+        self.get_current_lot().set_end_date()
+        
+        self.eval_advance_rules('end_date_rules')
+        self.eval_advance_rules('on_advance_rules')
+
         self.lot_number += 1
         self.lots.append(LineOfTherapy(self.lot_number, drugs=self.next_drugs))
         self.next_drugs = None
@@ -151,6 +164,12 @@ class LotGenerator():
     def get_current_lot(self) -> LineOfTherapy:
         for lot in self.lots:
             if lot.lot == self.lot_number:
+                return lot
+        return None
+    
+    def get_previous_lot(self) -> LineOfTherapy:
+        for lot in self.lots:
+            if lot.lot == self.lot_number - 1:
                 return lot
         return None
     
@@ -167,6 +186,24 @@ class LotGenerator():
     def add_lot_flag_false(self, flag_name: str) -> None:
         if not flag_name is None:
             self.get_current_lot().lot_flags[flag_name] = False
+
+    def add_lot_flag_value(self, flag_name: str, flag_value: object) -> None:
+        if not flag_name is None:
+            self.get_current_lot().lot_flags[flag_name] = flag_value
+
+    def adjust_lot_enddate(self, num_days: int): 
+        '''
+            add up to num_days or the day prior to the next lot/drugs
+        '''
+        lot = self.get_current_lot()
+        next_start = None
+        if not self.next_drugs is None:
+            next_start = min([x.start_dt for x in self.next_drugs])
+        
+        if len(self.drug_start_dates) > 0:
+            lot.adjust_lot_end(num_days=num_days, next_lot_start=next_start)
+        else:
+            lot.adjust_lot_end(num_days=num_days)
 
     def eval_rules(self, rule_type: str, fact: FactLotNextDrugs, default_advance=True, msg: str = None) -> None:
         '''
@@ -187,6 +224,19 @@ class LotGenerator():
             if default_advance and not self.next_drugs is None:
                 self.advance_lot(msg=msg)
 
+    def eval_advance_rules(self, rule_type: str, msg: str = None) -> None:
+        if len(self.drug_start_dates) == 0:
+            next_drugs = []
+        else: 
+            next_drugs = self.get_next_drugs(self.drug_start_dates[0])
+
+        fact = FactLotNextDrugs(self.get_current_lot(), next_drugs)
+
+        for rule in self.lot_rules.get_rules_by_type(rule_type):
+            conditions = rule.get_configured_conditions(fact)
+            actions = rule.get_configured_actions(self)
+            lot_rule = LotRule(rule.name, conditions=conditions, true_actions=actions)
+            if lot_rule.evaluate(fact): break
 
 
     def __str__(self) -> str:

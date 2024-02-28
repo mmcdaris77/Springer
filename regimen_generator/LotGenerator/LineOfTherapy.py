@@ -84,6 +84,32 @@ class LineOfTherapy():
         else:
             return False
         
+    def add_lot_flag_true(self, flag_name: str, lot_num: int = None) -> None:
+        if not flag_name is None:
+            self.lot_flags[flag_name] = True
+
+    def add_lot_flag_false(self, flag_name: str, lot_num: int = None) -> None:
+        if not flag_name is None:
+            self.lot_flags[flag_name] = False
+
+    def add_lot_flag_value(self, flag_name: str, flag_value: object, lot_num: int = None) -> None:
+        if not flag_name is None:
+            self.lot_flags[flag_name] = flag_value
+
+    def adjust_lot_end(self, num_days: int, next_lot_start: date = None): 
+        '''
+            post process action: 
+            add up to num_days or the day prior to the next lot
+        '''
+        self.set_end_date()
+        add_days = timedelta(days=num_days)
+        new_end = self.end + add_days
+        if not next_lot_start is None and new_end >= next_lot_start:
+            self.end = next_lot_start - timedelta(days=1)
+        else:
+            self.end = new_end    
+                
+        
     def __str__(self) -> str:
         rtn = f'LineOfTherapy: \
                     \n\tlot: {self.lot} \
