@@ -132,6 +132,7 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'is_past_allowable_gap': {'allowable_gap': int, Optional('therapy_routes'): list[str]}}),
         Schema({'has_other_therapy_by_lot_start': {'therapy_name': str, 'days_before_lot_start': int, 'days_after_lot_start': int}}),
         Schema({'has_other_therapy_by_lot_end': {'therapy_name': str, 'days_before_lot_end': int, 'days_after_lot_end': int}}),
+        Schema({'has_other_therapy_within_lot': {'therapy_name': str}}),
         Schema({'regimen_contains_any_drug': {'drugs': list[str]}}),
         Schema({'regimen_contains_therapy_route': {'therapy_route': list[str]}}),
     ]
@@ -151,6 +152,7 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
 
 
     valid_rule_set = lambda x: x in RULE_TYPES
+    not_rule_set_name = lambda x: not x in RULE_TYPES
 
     def get_func_args_msg(func_list: list[Schema]) -> str:
         msg = ''
@@ -182,7 +184,7 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
                     'allowable_drug_gap': int,
                     valid_rule_set: [
                         {
-                            'name': str, 
+                            'name': And(str, not_rule_set_name, error=f'cannot use a rule set name as a rule name. rule set names include: {RULE_TYPES}'), 
                             'conditions': And(list, CONDITIONS_DEFS, error=condition_error_msg), 
                             'actions': And(list, ACTION_DEFS, error=action_error_msg)
                             }

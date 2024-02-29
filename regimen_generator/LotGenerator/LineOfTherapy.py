@@ -1,17 +1,20 @@
 from datetime import date, timedelta
+from dataclasses import dataclass
 
 
+@dataclass(slots=True)
 class Drug():
-    def __init__(self, person_id: str, drug_name: str, start_dt: date, end_dt: date = None, drug_class: str = '',
-                 drug_type: str = '', therapy_route: str = '') -> None:
-        self.person_id: str = person_id
-        self.drug_name: str = drug_name
-        self.drug_class: str = drug_class
-        self.drug_type: str = drug_type
-        self.therapy_route: str = therapy_route
-        self.start_dt: date = start_dt
-        self.end_dt: date = self.default_end_date(end_dt)
-    
+    person_id: str
+    drug_name: str
+    start_dt: date
+    end_dt: date = None
+    drug_class: str = ''
+    drug_type: str = ''
+    therapy_route: str = ''
+
+    def __post_init__(self):
+        self.end_dt = self.default_end_date(self.end_dt)
+
     def default_end_date(self, end_dt): 
         if end_dt is None:
             return self.start_dt
@@ -21,13 +24,17 @@ class Drug():
     def __str__(self) -> str:
         return f'Drug: {self.drug_name} --> StartDate: {self.start_dt} --> EndDate: {self.end_dt}'
 
+
+@dataclass(slots=True)
 class OtherTherapy():
-    def __init__(self, person_id: str, therapy_name: str, start_dt: date, end_dt: date = None) -> None:
-        self.person_id: str = person_id
-        self.therapy_name: str = therapy_name
-        self.start_dt: date = start_dt
-        self.end_dt: date = self.default_end_date(end_dt)
-    
+    person_id: str
+    therapy_name: str
+    start_dt: date
+    end_dt: date = None
+
+    def __post_init__(self):
+        self.end_dt = self.default_end_date(self.end_dt)
+
     def default_end_date(self, end_dt): 
         if end_dt is None:
             return self.start_dt
@@ -35,7 +42,7 @@ class OtherTherapy():
             return end_dt
 
     def __str__(self) -> str:
-        return f'Drug: {self.drug_name} --> StartDate: {self.start_dt} --> EndDate: {self.end_dt}'
+        return f'Therapy: {self.therapy_name} --> StartDate: {self.start_dt} --> EndDate: {self.end_dt}'
     
 
 class LineOfTherapy():
