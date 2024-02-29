@@ -63,7 +63,7 @@ class LotGenerator():
 
             #rules
             # set the fact (the current lot and the next set of drugs)
-            fact_lot__next_drugs = FactLotNextDrugs(self.get_current_lot(), self.next_drugs)
+            fact_lot__next_drugs = FactLotNextDrugs(self.get_current_lot(), self.next_drugs, other_therapies=self.other_therapies)
             # init drugs rules
             action_add_init_drugs = LotAction('merge drugs', lambda fact: self.add_drugs_to_lot()) 
             action_in_init_range = LotAction('set is_is_within_init_range_range True', lambda is_is_within_init_range_range: True)
@@ -230,7 +230,7 @@ class LotGenerator():
         else: 
             next_drugs = self.get_next_drugs(self.drug_start_dates[0])
 
-        fact = FactLotNextDrugs(self.get_current_lot(), next_drugs)
+        fact = FactLotNextDrugs(self.get_current_lot(), next_drugs, other_therapies=self.other_therapies)
 
         for rule in self.lot_rules.get_rules_by_type(rule_type):
             conditions = rule.get_configured_conditions(fact)

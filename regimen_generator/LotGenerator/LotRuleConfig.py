@@ -135,6 +135,7 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'has_other_therapy_within_lot': {'therapy_name': str}}),
         Schema({'regimen_contains_any_drug': {'drugs': list[str]}}),
         Schema({'regimen_contains_therapy_route': {'therapy_route': list[str]}}),
+        Schema({'is_in_lot': {'lots_list': list[int]}}),
     ]
     
 

@@ -180,6 +180,11 @@ class FactLotNextDrugs():
                 return True 
         return False 
     
+    def is_in_lot(self, lots_list:list[int]) -> bool:
+        if self.lot.lot in lots_list:
+            return True
+        return False
+    
 
 
 
