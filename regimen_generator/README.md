@@ -39,6 +39,7 @@ The idea is to make something that can be configurable for different variations.
 | regimen_contains_drug_class | classes: list[str] | returns True if current LOT regimen contains any class from a list of classes, else False |
 | has_other_therapy_by_lot_start | therapy_name: str <br>days_before_lot_start: int <br>days_after_lot_start: int | returns True if there is an 'other thereapy' within the range |
 | has_other_therapy_by_lot_end | therapy_name: str <br>days_before_lot_end: int <br>days_after_lot_end: int | returns True if there is an 'other thereapy' within the range around the lot end date.  Use with **on_advance_rules** after lot end adjustments |
+| has_other_therapy_within_lot | therapy_name: str | returns True if there is an 'other thereapy' between the lot start and end date.  Use with **on_advance_rules** after lot end adjustments |
 | regimen_contains_any_drug | drugs: list[str] | returns True if the current regimen contains any drugs in the list, else False |
 | regimen_contains_therapy_route | therapy_route: list[str] | returns True if the current regimen contains any drugs with a therapy_route in the list, else False |
 

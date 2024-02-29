@@ -138,6 +138,7 @@ class FactLotNextDrugs():
         return rtn
 
     def regimen_contains_therapy_route(self, therapy_route: list[str]) -> bool: 
+        logger.debug(f'regimen_contains_therapy_route: lot_routes: {[x.therapy_route.lower() for x in self.lot.drugs]}')
         for drug in self.lot.drugs:
             if drug.therapy_route.lower() in [x.lower() for x in therapy_route]:
                 return True 
@@ -166,7 +167,7 @@ class FactLotNextDrugs():
             days_before_lot_end = days_before_lot_end * -1
         _lower_dt = self.lot.end - timedelta(days=days_before_lot_end)
         _upper_dt = self.lot.end + timedelta(days=days_after_lot_end)
-
+        logger.debug(f'has_other_therapy_by_lot_end: lot_end: {self.lot.end}    lower: {_lower_dt}   upper: {_upper_dt}')
         for t in self.other_therapies:
             if t.therapy_name.lower() == therapy_name.lower():
                 if _lower_dt <= t.start_dt <= _upper_dt:
