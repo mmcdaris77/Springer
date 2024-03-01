@@ -148,7 +148,9 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'add_lot_flag_true': {'flag_name': str}}),
         Schema({'add_lot_flag_false': {'flag_name': str}}),
         Schema({'add_lot_flag_value': {'flag_name': str, 'flag_value': object}}),
-        Schema({'adjust_lot_enddate': {'num_days': int}})
+        Schema({'adjust_lot_enddate': {'num_days': int}}),
+        Schema({'eval_next_regardless': None}),
+        
     ]
 
 

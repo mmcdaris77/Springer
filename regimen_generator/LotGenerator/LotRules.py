@@ -158,7 +158,7 @@ class FactLotNextDrugs():
 
         for t in self.other_therapies:
             if t.therapy_name.lower() == therapy_name.lower():
-                if _lower_dt <= t.start_dt <= _upper_dt:
+                if _lower_dt < t.start_dt < _upper_dt:
                     return True
         return False
     
@@ -170,13 +170,13 @@ class FactLotNextDrugs():
         logger.debug(f'has_other_therapy_by_lot_end: lot_end: {self.lot.end}    lower: {_lower_dt}   upper: {_upper_dt}')
         for t in self.other_therapies:
             if t.therapy_name.lower() == therapy_name.lower():
-                if _lower_dt <= t.start_dt <= _upper_dt:
+                if _lower_dt < t.start_dt < _upper_dt:
                     return True
         return False
     
     def has_other_therapy_within_lot(self, therapy_name: str) -> bool:
         for t in self.other_therapies:
-            if t.therapy_name.lower() == therapy_name.lower() and self.lot.start < t.start_dt < self.lot.end:
+            if t.therapy_name.lower() == therapy_name.lower() and self.lot.start <= t.start_dt <= self.lot.end:
                 return True 
         return False 
     

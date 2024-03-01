@@ -69,6 +69,43 @@ rule_sets:
           - add_lot_flag_true: 
               flag_name: 'adj'
 
+      - name: add_2
+        conditions:
+          - is_in_lot:
+              lots_list:
+                - 2
+        actions:
+          - add_lot_flag_true:
+              flag_name: 'eeeek'
+          - eval_next_regardless:
+
+      - name: add_3
+        conditions:
+          - is_in_lot:
+              lots_list:
+                - 2
+        actions:
+          - add_lot_flag_true:
+              flag_name: 'grrrrr'
+
+      - name: add_3
+        conditions:
+          - is_in_lot:
+              lots_list:
+                - 3
+        actions:
+          - add_lot_flag_true:
+              flag_name: 'deeeeeerrrr'
+
+      - name: add_4
+        conditions:
+          - is_in_lot:
+              lots_list:
+                - 3
+        actions:
+          - add_lot_flag_true:
+              flag_name: 'I should not be here'
+
     addition_rules:
       - name: swappable_rule_1
         conditions:
