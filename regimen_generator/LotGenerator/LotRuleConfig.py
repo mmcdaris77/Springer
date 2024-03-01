@@ -135,6 +135,7 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
         Schema({'has_other_therapy_within_lot': {'therapy_name': str}}),
         Schema({'regimen_contains_any_drug': {'drugs': list[str]}}),
         Schema({'regimen_contains_therapy_route': {'therapy_route': list[str]}}),
+        Schema({'is_in_lot': {'lots_list': list[int]}}),
     ]
     
 
@@ -182,7 +183,7 @@ def validate_schema(rule_set_name: str, data: dict) -> dict:
                     'name': str, 
                     'init_days': int,
                     'allowable_drug_gap': int,
-                    valid_rule_set: [
+                    Optional(valid_rule_set): [
                         {
                             'name': And(str, not_rule_set_name, error=f'cannot use a rule set name as a rule name. rule set names include: {RULE_TYPES}'), 
                             'conditions': And(list, CONDITIONS_DEFS, error=condition_error_msg), 

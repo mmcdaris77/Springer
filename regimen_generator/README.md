@@ -42,6 +42,7 @@ The idea is to make something that can be configurable for different variations.
 | has_other_therapy_within_lot | therapy_name: str | returns True if there is an 'other thereapy' between the lot start and end date.  Use with **on_advance_rules** after lot end adjustments |
 | regimen_contains_any_drug | drugs: list[str] | returns True if the current regimen contains any drugs in the list, else False |
 | regimen_contains_therapy_route | therapy_route: list[str] | returns True if the current regimen contains any drugs with a therapy_route in the list, else False |
+| is_in_lot | lots_list: list[int] | If the current lot is in the lots_list return True, else False |
 
 
 ### Action Functions
