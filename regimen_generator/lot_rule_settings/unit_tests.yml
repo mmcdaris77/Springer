@@ -1,0 +1,30 @@
+version: '0.1'
+
+rule_sets:
+  - name: unit_test_1
+    init_days: 28
+    allowable_drug_gap: 80
+
+
+  - name: unit_test_2
+    init_days: 50
+    allowable_drug_gap: 90
+    
+    gap_rules: 
+      - name: gap_IV_drugs
+        conditions:
+            - is_past_allowable_gap:
+                allowable_gap: 120
+                therapy_routes:
+                  - 'IV'
+        actions:
+          - advance_lot:
+          
+      - name: gap_oral_drugs
+        conditions:
+          - is_past_allowable_gap:
+              allowable_gap: 80
+              therapy_routes:
+                - 'oral'
+        actions:
+          - advance_lot:

@@ -20,8 +20,8 @@ class LotGenerator():
         self.lot_number: int = 1
         self.lots: list[LineOfTherapy] = []
         self.lot_rules = self.set_lot_rules(lot_rules)
-        self.next_drugs: list[Drug]
-        self.other_therapies: list[OtherTherapy]
+        self.next_drugs: list[Drug] = []
+        self.other_therapies: list[OtherTherapy] = []
 
     def set_lot_rules(self, lot_rules: LotRuleConfig) -> LotRuleConfig:
         if not isinstance(lot_rules, LotRuleConfig):
