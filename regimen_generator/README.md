@@ -57,6 +57,7 @@ The idea is to make something that can be configurable for different variations.
 | add_lot_flag_false | flag_name: str | add a lot flag = False |
 | add_lot_flag_value | flag_name: str, flag_value: any | add a lot flag = value |
 | adjust_lot_enddate | num_days: int | adjust lot end date + num_days or 1 day before next lot start.  Use for **end_date_rules**  |
+| eval_next_regardless | n/a | for evaluation of next rule regardless of state.  This is good when more than on flag setting is needed on_advance |
 
 
 

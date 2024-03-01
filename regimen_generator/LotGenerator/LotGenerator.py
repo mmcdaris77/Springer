@@ -22,6 +22,7 @@ class LotGenerator():
         self.lot_rules = self.set_lot_rules(lot_rules)
         self.next_drugs: list[Drug] = []
         self.other_therapies: list[OtherTherapy] = []
+        self.force_next_eval: bool = False
 
     def set_lot_rules(self, lot_rules: LotRuleConfig) -> LotRuleConfig:
         if not isinstance(lot_rules, LotRuleConfig):
@@ -179,17 +180,32 @@ class LotGenerator():
         lot.lot_rule = lot_rule
         self.next_drugs = None
 
-    def add_lot_flag_true(self, flag_name: str) -> None:
+    def add_lot_flag_true(self, flag_name: str, first_instance_only: bool = False) -> None:
+        if first_instance_only and self.__has_previous_lot_flag(flag_name):
+            return
+        
         if not flag_name is None:
             self.get_current_lot().lot_flags[flag_name] = True
 
-    def add_lot_flag_false(self, flag_name: str) -> None:
+    def add_lot_flag_false(self, flag_name: str, first_instance_only: bool = False) -> None:
+        if first_instance_only and self.__has_previous_lot_flag(flag_name):
+            return
+        
         if not flag_name is None:
             self.get_current_lot().lot_flags[flag_name] = False
 
-    def add_lot_flag_value(self, flag_name: str, flag_value: object) -> None:
+    def add_lot_flag_value(self, flag_name: str, flag_value: object, first_instance_only: bool = False) -> None:
+        if first_instance_only and self.__has_previous_lot_flag(flag_name):
+            return
+        
         if not flag_name is None:
             self.get_current_lot().lot_flags[flag_name] = flag_value
+
+    def __has_previous_lot_flag(self, flag_name: str) -> bool:
+        for l in self.lots:
+            if flag_name in l.lot_flags.keys():
+                return True
+        return False
 
     def adjust_lot_enddate(self, num_days: int): 
         '''
@@ -224,6 +240,9 @@ class LotGenerator():
             if default_advance and not self.next_drugs is None:
                 self.advance_lot(msg=msg)
 
+    def eval_next_regardless(self) -> None:
+        self.force_next_eval = True
+
     def eval_advance_rules(self, rule_type: str, msg: str = None) -> None:
         if len(self.drug_start_dates) == 0:
             next_drugs = []
@@ -233,10 +252,11 @@ class LotGenerator():
         fact = FactLotNextDrugs(self.get_current_lot(), next_drugs, other_therapies=self.other_therapies)
 
         for rule in self.lot_rules.get_rules_by_type(rule_type):
+            self.force_next_eval = False
             conditions = rule.get_configured_conditions(fact)
             actions = rule.get_configured_actions(self)
             lot_rule = LotRule(rule.name, conditions=conditions, true_actions=actions)
-            if lot_rule.evaluate(fact): break
+            if lot_rule.evaluate(fact) and not self.force_next_eval: break
 
 
     def __str__(self) -> str:
