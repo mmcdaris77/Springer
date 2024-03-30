@@ -109,3 +109,4 @@ _SCRATCH.*
 temp/
 .vscode/
 log/
+logs/
