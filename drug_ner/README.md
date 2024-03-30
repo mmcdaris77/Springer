@@ -4,3 +4,5 @@
 Use OMOP concepts to generate patterns and tags
 save model to disk
 use the model on some oncology regimens generated from ChatGPT
+
+![example visual output](img/tagged_vis.png)
