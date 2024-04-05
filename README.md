@@ -9,6 +9,8 @@ Is an example of NER for unstructured drug data using Spacy Rule-Based Matching 
 
 ## [omop](https://github.com/mmcdaris77/Springer/tree/master/omop)
 OMOP CDM queries.
+DBT boilerplate project
+Vocabulary load to postgres
 
 ## [npi_data](https://github.com/mmcdaris77/Springer/tree/master/npi_data)
 Is an example of DBT and Dagster using SQLITE. 
