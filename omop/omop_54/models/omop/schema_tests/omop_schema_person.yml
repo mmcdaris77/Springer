@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: omop_person
+    columns:
+      - name: person_id
+        tests:
+          - unique
+          - not_null
+      - name: location_id
+        tests:
+          - relationships:
+              to: ref('omop_location')
+              field: location_id
+      - name: provider_id
+        tests:
+          - relationships:
+              to: ref('omop_provider')
+              field: provider_id
+      - name: care_site_id
+        tests:
+          - relationships:
+              to: ref('omop_care_site')
+              field: care_site_id
+      - name: gender_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: year_of_birth
+        tests:
+          - not_null
+      - name: race_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: ethnicity_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

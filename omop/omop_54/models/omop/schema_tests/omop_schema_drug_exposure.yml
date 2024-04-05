@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: omop_stg_drug_exposure
+    columns:
+      - name: drug_exposure_id
+        tests:
+          - unique
+          - not_null
+      - name: person_id
+        tests:
+          - relationships:
+              to: ref('omop_person')
+              field: person_id
+      - name: drug_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: drug_type_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: route_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: provider_id
+        tests:
+          - relationships:
+              to: ref('omop_provider')
+              field: provider_id
+      - name: visit_occurrence_id
+        tests:
+          - relationships:
+              to: ref('omop_visit_occurrence')
+              field: visit_occurrence_id
+      - name: visit_detail_id
+        tests:
+          - relationships:
+              to: ref('omop_visit_detail')
+              field: visit_detail_id
+      - name: drug_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+    
+
+
+
+
+

@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: omop_note
+    columns:
+      - name: note_id
+        tests:
+          - unique
+          - not_null
+
+      - name: note_type_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: person_id
+        tests:
+          - relationships:
+              to: ref('omop_person')
+              field: person_id
+      - name: note_class_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: encoding_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: language_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: provider_id
+        tests:
+          - relationships:
+              to: ref('omop_provider')
+              field: provider_id
+      - name: visit_occurrence_id
+        tests:
+          - relationships:
+              to: ref('omop_visit_occurrence')
+              field: visit_occurrence_id
+      - name: visit_detail_id
+        tests:
+          - relationships:
+              to: ref('omop_visit_detail')
+              field: visit_detail_id
+      - name: note_event_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: note_event_field_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+              
+    
+
+
+
+
+

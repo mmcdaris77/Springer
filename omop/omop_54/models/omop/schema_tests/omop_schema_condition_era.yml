@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: omop_condition_era
+    columns:
+      - name: condition_era_id
+        tests:
+          - unique
+          - not_null
+      - name: person_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('omop_person')
+              field: person_id
+      - name: condition_concept_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: condition_era_start_date
+        tests:
+          - not_null
+      - name: condition_era_end_date
+        tests:
+          - not_null
+      - name: condition_occurrence_count
+        tests:
+          - not_null
+
+

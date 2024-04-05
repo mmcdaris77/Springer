@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: omop_payer_plan_period
+    columns:
+      - name: payer_plan_period_id
+        tests:
+          - unique
+          - not_null
+      - name: person_id
+        tests:
+          - relationships:
+              to: ref('omop_person')
+              field: person_id
+      - name: payer_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: payer_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: plan_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: plan_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: sponsor_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: sponsor_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: stop_reason_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: stop_reason_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id

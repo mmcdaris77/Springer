@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: omop
+    database: postgres  
+    schema: omop  
+    tables:
+      - name: concept
+      - name: concept_relationship

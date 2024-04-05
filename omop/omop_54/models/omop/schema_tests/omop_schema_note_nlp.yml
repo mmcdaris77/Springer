@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: omop_note_nlp
+    columns:
+      - name: note_nlp_id
+        tests:
+          - unique
+          - not_null
+      - name: note_id
+        tests:
+          - relationships:
+              to: ref('omop_note')
+              field: note_id
+      - name: section_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: note_nlp_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: note_nlp_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      
+      
+
+      

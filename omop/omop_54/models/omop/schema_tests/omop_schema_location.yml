@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: omop_location
+    columns:
+      - name: location_id
+        tests:
+          - unique
+          - not_null
+      - name: country_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+    
+
+
+
+
+

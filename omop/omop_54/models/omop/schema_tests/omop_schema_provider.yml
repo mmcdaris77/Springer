@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: omop_provider
+    columns:
+      - name: provider_id
+        tests:
+          - unique
+          - not_null
+      - name: specialty_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: care_site_id
+        tests:
+          - relationships:
+              to: ref('omop_care_site')
+              field: care_site_id
+      - name: specialty_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: gender_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+    
+
+
+
+
+
