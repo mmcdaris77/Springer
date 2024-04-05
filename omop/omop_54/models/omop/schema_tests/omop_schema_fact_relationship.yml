@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: omop_fact_relationship
+    columns:
+      - name: fact_id_1
+        tests:
+          - not_null
+      - name: fact_id_2
+        tests:
+          - not_null
+      - name: domain_concept_id_1
+        tests:
+          - not_null
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: domain_concept_id_2
+        tests:
+          - not_null
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: relationship_concept_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+
+           

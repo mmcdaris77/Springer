@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: omop_cost
+    columns:
+      - name: cost_id
+        tests:
+          - unique
+          - not_null
+      - name: cost_event_id
+        tests:
+          - not_null
+      - name: cost_domain_id
+        tests:
+          - not_null
+      - name: cost_type_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: currency_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: payer_plan_period_id
+        tests:
+          - relationships:
+              to: ref('omop_payer_plan_period')
+              field: payer_plan_period_id
+      - name: revenue_code_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: drg_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+
+
+
+
+

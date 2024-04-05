@@ -1,0 +1,5 @@
+dbt-core==1.7
+dbt-postgres==1.7
+dagster==1.6.14
+dagster-dbt==0.22.14
+dagster-webserver==1.6.14

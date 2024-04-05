@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: omop_stg_specimen
+    columns:
+      - name: specimen_id
+        tests:
+          - unique
+          - not_null
+      - name: specimen_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: person_id
+        tests:
+          - relationships:
+              to: ref('omop_person')
+              field: person_id
+      - name: specimen_type_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: unit_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: anatomic_site_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: disease_status_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+     
+     
+
+     

@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: omop_visit_occurrence
+    columns:
+      - name: visit_occurrence_id
+        tests:
+          - unique
+          - not_null
+      - name: visit_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: person_id
+        tests:
+          - relationships:
+              to: ref('omop_person')
+              field: person_id
+      - name: visit_type_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: provider_id
+        tests:
+          - relationships:
+              to: ref('omop_provider')
+              field: provider_id
+      - name: care_site_id
+        tests:
+          - relationships:
+              to: ref('omop_care_site')
+              field: care_site_id
+      - name: visit_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: admitted_from_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: discharged_to_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: preceding_visit_occurrence_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+    
+
+
+
+
+

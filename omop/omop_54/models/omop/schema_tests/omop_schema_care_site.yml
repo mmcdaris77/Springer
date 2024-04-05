@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: omop_stg_care_site
+    columns:
+      - name: care_site_id
+        tests:
+          - unique
+          - not_null
+      - name: location_id
+        tests:
+          - relationships:
+              to: ref('omop_location')
+              field: location_id
+    
+
+
+
+
+

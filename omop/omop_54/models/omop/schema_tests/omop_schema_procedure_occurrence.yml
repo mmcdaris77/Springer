@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: omop_stg_procedure_occurrence
+    columns:
+      - name: procedure_occurrence_id
+        tests:
+          - unique
+          - not_null
+      - name: procedure_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: person_id
+        tests:
+          - relationships:
+              to: ref('omop_person')
+              field: person_id
+      - name: procedure_type_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: modifier_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: provider_id
+        tests:
+          - relationships:
+              to: ref('omop_provider')
+              field: provider_id
+      - name: visit_occurrence_id
+        tests:
+          - relationships:
+              to: ref('omop_visit_occurrence')
+              field: visit_occurrence_id
+      - name: visit_detail_id
+        tests:
+          - relationships:
+              to: ref('omop_visit_detail')
+              field: visit_detail_id
+      - name: procedure_source_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+    
+
+
+
+
+
