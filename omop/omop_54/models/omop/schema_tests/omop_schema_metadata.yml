@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: omop_metadata
+    columns:
+      - name: metadata_id
+        tests:
+          - not_null
+          - unique
+      - name: metadata_concept_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: metadata_type_concept_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: name
+        tests:
+          - not_null
+          
+
+          

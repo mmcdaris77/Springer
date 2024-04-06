@@ -1,49 +1,41 @@
 version: 2
 
 models:
-  - name: omop_stg_specimen
+  - name: omop_episode
     columns:
-      - name: specimen_id
+      - name: episode_id
         tests:
           - unique
           - not_null
-      - name: specimen_concept_id
-        tests:
-          - not_null
-          - relationships:
-              to: source('omop', 'concept')
-              field: concept_id
       - name: person_id
         tests:
           - not_null
           - relationships:
               to: ref('omop_person')
               field: person_id
-      - name: specimen_type_concept_id
+      - name: episode_concept_id
         tests:
           - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
-      - name: specimen_date
+      - name: episode_object_concept_id
         tests:
           - not_null
-      - name: unit_concept_id
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: episode_type_concept_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: episode_source_concept_id
         tests:
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
-      - name: anatomic_site_concept_id
+      - name: episode_start_date
         tests:
-          - relationships:
-              to: source('omop', 'concept')
-              field: concept_id
-      - name: disease_status_concept_id
-        tests:
-          - relationships:
-              to: source('omop', 'concept')
-              field: concept_id
-     
-     
-
-     
+          - not_null

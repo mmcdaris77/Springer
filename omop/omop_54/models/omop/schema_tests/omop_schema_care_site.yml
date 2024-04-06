@@ -12,6 +12,11 @@ models:
           - relationships:
               to: ref('omop_location')
               field: location_id
+      - name: place_of_service_concept_id
+        tests:
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
     
 
 

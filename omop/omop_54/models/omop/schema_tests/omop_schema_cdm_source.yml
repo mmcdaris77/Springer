@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: omop_cdm_source
+    columns:
+      - name: cdm_source_name
+        tests:
+          - not_null
+      - name: cdm_source_abbreviation
+        tests:
+          - not_null
+      - name: cdm_holder
+        tests:
+          - not_null
+      - name: source_release_date
+        tests:
+          - not_null
+      - name: cdm_release_date
+        tests:
+          - not_null
+      - name: cdm_version_concept_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('omop', 'concept')
+              field: concept_id
+      - name: vocabulary_version
+        tests:
+          - not_null
+          
+
