@@ -7,29 +7,39 @@ models:
         tests:
           - unique
           - not_null
-
+      - name: note_date
+        tests:
+          - not_null
       - name: note_type_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
       - name: person_id
         tests:
+          - not_null
           - relationships:
               to: ref('omop_person')
               field: person_id
       - name: note_class_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
+      - name: note_text
+        tests:
+          - not_null
       - name: encoding_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
       - name: language_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id

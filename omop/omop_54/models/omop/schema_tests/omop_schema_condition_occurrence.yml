@@ -9,16 +9,22 @@ models:
           - not_null
       - name: condition_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
       - name: person_id
         tests:
+          - not_null
           - relationships:
               to: ref('omop_person')
               field: person_id
+      - name: condition_start_date
+        tests:
+          - not_null
       - name: condition_type_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id

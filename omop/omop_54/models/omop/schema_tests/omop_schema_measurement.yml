@@ -10,16 +10,22 @@ models:
 
       - name: measurement_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
       - name: person_id
         tests:
+          - not_null
           - relationships:
               to: ref('omop_person')
               field: person_id
+      - name: measurement_date
+        tests:
+          - not_null
       - name: measurement_type_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id

@@ -9,9 +9,16 @@ models:
           - not_null
       - name: person_id
         tests:
+          - not_null
           - relationships:
               to: ref('omop_person')
               field: person_id
+      - name: payer_plan_period_start_date
+        tests:
+          - not_null
+      - name: payer_plan_period_end_date
+        tests:
+          - not_null
       - name: payer_concept_id
         tests:
           - relationships:

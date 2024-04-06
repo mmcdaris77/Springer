@@ -9,6 +9,7 @@ models:
           - not_null
       - name: note_id
         tests:
+          - not_null
           - relationships:
               to: ref('omop_note')
               field: note_id
@@ -27,6 +28,12 @@ models:
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
+      - name: lexical_variant
+        tests:
+          - not_null
+      - name: nlp_date
+        tests:
+          - not_null
       
       
 

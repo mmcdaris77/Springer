@@ -9,16 +9,25 @@ models:
           - not_null
       - name: visit_detail_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
       - name: person_id
         tests:
+          - not_null
           - relationships:
               to: ref('omop_person')
               field: person_id
+      - name: visit_detail_start_date
+        tests:
+          - not_null
+      - name: visit_detail_end_date
+        tests:
+          - not_null
       - name: visit_detail_type_concept_id
         tests:
+          - not_null
           - relationships:
               to: source('omop', 'concept')
               field: concept_id
@@ -59,6 +68,7 @@ models:
               field: concept_id
       - name: visit_occurrence_id
         tests:
+          - not_null
           - relationships:
               to: ref('omop_visit_occurrence')
               field: visit_occurrence_id
