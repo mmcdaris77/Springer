@@ -1,0 +1,29 @@
+
+{
+    "name": "test_mod",
+    "test_data": {
+        "tbl_x": {
+            "schema": {"id": "number", "col_a": "number", "col_b": "number", "col_c": "string", "bol": "boolean"},
+            "data": [
+                {"id": 1, "col_a": 1, "col_b": 2, "col_c": "null", "bol": "null"},
+                {"id": 2, "col_a": 3, "col_b": 4.55, "col_c": "a", "bol": "True"},
+                {"id": 3, "col_a": 1, "col_b": 2, "col_c": "null", "bol": 0}
+            ]
+        },
+        "another_tbl": {
+            "schema": {"id": "number", "value": "string"},
+            "data": [
+                {"id": 100, "value": "grr"},
+                {"id": 103, "value": "fur"}
+            ]
+        }
+    },
+    "expected_values": {
+        "schema": {"col_a": "number", "case_col": "int"},
+        "data":[
+            {"col_a": 1, "case_col": 0},
+            {"col_a": 2, "case_col": 1}
+        ]
+        
+    }
+}
