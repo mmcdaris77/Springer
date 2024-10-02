@@ -55,14 +55,19 @@ def inject_mock_data_sql(sql, test_data: dict) -> str:
         mock_cte_name = f"{DTF_CTE_PREFIX}{dtf_mock_map[k]['id']}"
         cte_dtf_mock_data = make_mock_union(v)
 
-        for t in root.find_all(exp.Table):
-            if str(t.this).lower() == k.lower():
-                # set the cte name and remove db.schema if they exist
-                t.set('this', mock_cte_name)
-                t.set('db', None)
-                t.set('catalog', None)
+        for scope in root.traverse():
+            for alian, (node, source) in scope.selected_sources.items():
+                if isinstance(source, exp.Table):
+                    if str(source.this).lower() == k.lower():
+                        # set the cte name and remove db.schema if they exist
+                        source.set('this', mock_cte_name)
+                        source.set('db', None)
+                        source.set('catalog', None)
 
-        ast = ast.with_(mock_cte_name, as_=cte_dtf_mock_data)
+        ctes = ast.ctes
+        ast = ast.with_(mock_cte_name, as_=cte_dtf_mock_data, append=False)
+        for cte in ctes:
+            ast = ast.with_(cte.alias, as_=cte.this, append=True)
     
     return ast.sql()
 
