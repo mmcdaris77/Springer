@@ -6,8 +6,14 @@ import os
 THINGS_TO_COUNT = {
     'CASE': {'type': exp.Case},
     'IFF': {'type': exp.If},
-    'WINDOW': {'type': exp.Window}
+    'WINDOW_FUNC': {'type': exp.Window}, 
+    'REGEXP_REPLACE': {'type': exp.RegexpReplace}, 
+    'REGEXP_LIKE': {'type': exp.RegexpLike},
+    'REGEXP_ILIKE': {'type': exp.RegexpILike},
+    'DATEADD': {'type': exp.DateAdd},
+    'DATEDIFF': {'type': exp.DateDiff}
 }
+
 
 def get_test_potential(sql):
     '''get count of potential unit tests in sql query'''
@@ -51,6 +57,7 @@ if __name__ == '__main__':
     sql = '''with cte_zero as (select 0 as zero) select a.col_a, b.col_b 
         ,case when a.col_a % 2 = 0 then 1 else 0 end as case_col
         ,iif(1=1, 1, 0) as oneone
+        ,regexp_replace(a.col, '[a-b]', '') as reg_col
     from tbl_x as a join tbl_z b on a.id = b.id
     qualify row_number() over(partition by a.col1 order by case when a.col2 in (1,2) then 0 else 1 end) = 1
     '''
