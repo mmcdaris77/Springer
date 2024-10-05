@@ -43,33 +43,43 @@ def make_mock_union(mock_node: dict) -> Select:
     return cte_dtf_mock_data
 
 
+def replace_table_with_mock_cte(sql, table: str, mock_cte_name: str): 
+    ast = parse_one(sql, dialect='snowflake')
+    root = build_scope(ast)
+    for scope in root.traverse():
+        for alias, (node, source) in scope.selected_sources.items():
+            if isinstance(source, exp.Table): 
+                if str(source.this).lower() == table.lower().split('.')[-1]:
+                    source.set('this', mock_cte_name)
+                    source.set('db', None)
+                    source.set('catalog', None)
+    return ast.sql()
+
+
 def inject_mock_data_sql(sql, test_data: dict) -> str:
     dtf_mock_map = {}
 
     for x in list(test_data.keys()):
         dtf_mock_map[x] = {'id': id(x)}
 
-    ast = parse_one(sql)
-    root = build_scope(ast)
+
     for k, v in test_data.items():
         mock_cte_name = f"{DTF_CTE_PREFIX}{dtf_mock_map[k]['id']}"
         cte_dtf_mock_data = make_mock_union(v)
 
-        for scope in root.traverse():
-            for alian, (node, source) in scope.selected_sources.items():
-                if isinstance(source, exp.Table):
-                    if str(source.this).lower() == k.lower():
-                        # set the cte name and remove db.schema if they exist
-                        source.set('this', mock_cte_name)
-                        source.set('db', None)
-                        source.set('catalog', None)
+        sql = replace_table_with_mock_cte(sql=sql, table=k, mock_cte_name=mock_cte_name)
 
+        # push then ctes down; append to the top
+        # so downstream refs have access to mock ctes
+        ast = parse_one(sql, dialect='snowflake')
         ctes = ast.ctes
         ast = ast.with_(mock_cte_name, as_=cte_dtf_mock_data, append=False)
         for cte in ctes:
             ast = ast.with_(cte.alias, as_=cte.this, append=True)
+
+        sql =ast.sql()
     
-    return ast.sql()
+    return sql
 
 
 def inject_test_data_sql(sql: str, expected_values: dict) -> str:
